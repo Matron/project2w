@@ -25,13 +25,14 @@ var Container = {
         return function() {            
             if (_simObject.destination) {
                 MessageDispatcher.dispatch( this.parentObject, _simObject, "Launch", "", 0);
-            } else {
+            } else {                
                 Gui.getSatPage().mfd.$canvas.addEventListener( 'click', waitForCoordinates, false);
             }
         }
 
         function waitForCoordinates( event ) {
-            var pos = Gui.getSatPage().screenToWorld( event.x, event.y );
+            console.log("wait for coordinates");
+            var pos = Gui.getSatPage().screenToWorld( event.offsetX, event.offsetY );
             _simObject.destination = new GeoLocation( pos.lat, pos.lon, -250 );
             Gui.getSatPage().mfd.$canvas.removeEventListener('click', waitForCoordinates, false);
         }

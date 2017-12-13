@@ -99,11 +99,12 @@ var PageSatellite = {
 
     screenToWorld: function( _x, _y ) {
         if ( _x < this.mfd.$canvas.width / 2 ) {
-            var lon = 180 - (_x * 180 / this.mfd.$canvas.width) ;
-            console.log("lon: " + lon);
-        }
-        
-        var lat = 0;
+            var lon = (180 - (_x * 360 / this.mfd.$canvas.width)) * -1;
+        } else {
+            var lon = (_x * 360 / this.mfd.$canvas.width) - 180;
+        }   
+        var lat = 90 - (_y * 180 / this.mfd.$canvas.height);
+
         return { lon: lon, lat: lat };
     },
 

@@ -45,10 +45,10 @@ Gui = {
 
         var pageTact = Object.create( PageTactical );
         pageTact.init();
-        mfd_c.setPage( pageTact );
+        mfd_r.setPage( pageTact );
 
         var pageUnit = Object.create( PageUnit );
-        mfd_r.setPage( pageUnit );        
+        mfd_c.setPage( pageUnit );        
     },
     
     draw: function( _fps ) {          

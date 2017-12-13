@@ -121,6 +121,8 @@ var PageUnit = {
             button.init( 135, 220 + (i*30),
                          so.name, so.destination ? "#00ff00" : "red",
                          cntr, cntr.launch( so ) );
+            if (so.destination) 
+                _context.fillText( so.destination.lon.toFixed(4) + " : " + so.destination.lat.toFixed(4), 210, 233+(i*30));
             this.buttons.push( button );
         }        
     },
