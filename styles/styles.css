@@ -1,0 +1,18 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: rgb(112, 112, 112);
+}
+
+canvas {
+    margin: 10px;    
+    background-color: #05001c; 
+}
+
+/* canvas:hover {
+    cursor: crosshair;
+} */
+
