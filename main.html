@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MFDS</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+
+<body>
+    <!--<script src="utils/vector2d.js"></script>-->
+    <script src="utils/geo_location.js"></script>
+    <script src="utils/utils.js"></script>
+    
+    <script src="sim/sim.js"></script>  
+    <script src="sim/sim_object.js"></script>
+    <script src="sim/units/orbiter.js"></script>
+    <script src="sim/units/drone.js"></script>
+    <script src="sim/units/critter.js"></script>
+    
+    <script src="sim/units/components/container.js"></script>
+    <script src="sim/units/components/sensor.js"></script>
+    <script src="sim/units/components/dynamics.js"></script>
+    <script src="sim/units/components/graphics.js"></script>
+    
+    <script src="sim/states/state_machine.js"></script>
+    <script src="sim/states/state_global.js"></script>
+    <script src="sim/states/state_in_container.js"></script>
+    <script src="sim/states/state_orbit.js"></script>
+    <script src="sim/states/state_deorbit.js"></script>
+    <script src="sim/states/state_drone_deploy.js"></script>
+    <script src="sim/states/state_dive.js"></script>
+    <script src="sim/states/state_scan_for_resources.js"></script>
+    <script src="sim/states/critter_feed.js"></script>
+    
+    <script src="sim/sectors/sector.js"></script>
+
+    <script src="sim/messages/message_dispatcher.js"></script>    
+    <script src="sim/messages/message.js"></script>
+    
+    <script src="gui/gui.js"></script>
+    <script src="gui/mfds/mfd.js"></script>
+    <script src="gui/mfds/button.js"></script>
+    <script src="gui/mfds/slider.js"></script>
+    
+    <script src="gui/mfds/page_satellite.js"></script>
+    <script src="gui/mfds/page_unit.js"></script>
+    <script src="gui/mfds/page_tactical.js"></script>
+    <script src="gui/mfds/page_empty.js"></script>
+
+    <script>
+    
+        window.onload = function() {
+            
+            Sim.load( "Chapter 2" );
+            Gui.init();
+            
+            //sim egine------------------------------------------------------
+            //---------------------------------------------------------------
+            var lastFrameTime = 0,
+                maxFPS = 30,          //max fps to allow for gui refresh
+                delta = 0,  
+                timestep = 500 ,      //sim update step ms
+                started = false,
+                lastFpsUpdate = 0,
+                framesThisSecond = 0,
+                fps = 50;              
+    
+            
+            //main loop---------------------------------------------------------------
+            function mainLoop( _timestamp ) {
+                //throttle the frame rate
+                if( _timestamp < lastFrameTime + ( 1000 / maxFPS )) {
+                    requestAnimationFrame( mainLoop );
+                    return;
+                }
+                //track actual time that hasn't been simulated yet
+                delta += _timestamp - lastFrameTime;
+                lastFrameTime = _timestamp;
+                
+                //calculate fps every second
+                if (_timestamp > lastFpsUpdate + 1000) {
+                    fps = 0.25 * framesThisSecond + 0.75 * fps;
+                    lastFpsUpdate = _timestamp;
+                    framesThisSecond = 0;
+                }
+                framesThisSecond++;
+                
+                
+                //simulate elapsed time in fixed-size chunks                
+                while( delta >= timestep ) { 
+                    Sim.update( delta );
+                    delta -= timestep;
+                }
+                
+                Gui.draw( fps );                
+
+                requestAnimationFrame( mainLoop );
+            }//------------------------------------------------------------------------------------
+            
+            function start() {
+                if (!started) {
+                    started = true;
+                    requestAnimationFrame( function( _timestamp) {
+                        
+                        //initial draw
+                        Gui.draw( fps ); 
+                        
+                        //reset time tracking variables
+                        lastFrameTime = _timestamp;
+                        requestAnimationFrame( mainLoop );
+                    } );
+                }
+            }
+            
+            function stop() {
+                started = false;
+                cancelAnimationFrame();
+            }
+            //---------------------------------------------------------------
+            //---------------------------------------------------------------
+    
+            start();               
+        }
+
+    </script>
+
+</body>
+</html>
+    
