@@ -23,13 +23,14 @@ var Dynamics = {
         if (this.acceleration != 0) {
             this.speed = this.speed + ( this.acceleration * (_elapsed / 1000) );
             if ( Math.abs( this.desiredSpeed - this.speed ) < Math.abs(this.acceleration * 10) ) {              
-                this.acceleration = this.acceleration * 0.6;   
-                if ( Math.abs(this.acceleration) < 0.5 || this.speed < 0) {
-                    this.acceleration = 0;
-                    this.speed = 0;
-                }                  
+                this.acceleration = this.acceleration * 0.6;                     
                 console.log("set acceleration " + this.acceleration.toFixed(2) + " speed " + this.speed);                
-            }                
+            }   
+            if ( Math.abs(this.acceleration) < 0.5 || this.speed < 0) {
+                this.acceleration = 0;
+                this.speed = 0;
+                console.log("stopped");
+            }             
         }
 
         if (this.speed > 0) this.position = this.position.addDistance( _elapsed / 1000 * this.speed );  
@@ -40,8 +41,7 @@ var Dynamics = {
             if ( Math.abs(this.desiredAltitude - this.position.alt) < Math.abs(this.altitude_rate)) {                                
                 console.log( "---set desired altitude of " + this.desiredAltitude + " from " + this.position.alt );
                 this.position.alt = this.desiredAltitude;
-                this.altitude_rate = 0;
-                
+                this.altitude_rate = 0;                
             }
         }
     },
