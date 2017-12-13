@@ -49,11 +49,13 @@ var StateDeorbit = {
         
         //if ( _simObject.dynamics.position.alt == 0) _simObject.stateMachine.revertToPreviousState();
         
-        /* if ( this.dist < 5 ) {            
+        if ( this.dist < 5 ) {            
             _simObject.dynamics.setSpeed( 0, -0.5 );
             _simObject.dynamics.position.alt = 0;
+            console.log("ended at " + (_simObject.dynamics.position.lon - _simObject.destination.lon).toFixed(4) +
+                        " : " + (_simObject.dynamics.position.lat - _simObject.destination.lat).toFixed(4) + " dist " + this.dist );
             _simObject.stateMachine.revertToPreviousState();
-        } */
+        }
 
         //var eta = ( this._simObject.dynamics.desiredSpeed - _simObject.dynamics.speed ) / Math.abs(_simObject.dynamics.acceleration);
         _simObject.dynamics.setHeading( _simObject.dynamics.position.calculateBearing( _simObject.destination ) );                   
