@@ -97,7 +97,7 @@ var PageUnit = {
             var dist = this.simObject.dynamics.position.calculateDistance( this.simObject.destination )
             _context.fillText( "Rng: " + ( dist / 1000).toFixed(1), 20, 340 );
 
-            var eta = dist / this.simObject.dynamics.speed;
+            var eta = dist / this.simObject.dynamics.speed;            
             _context.fillText( "ETE: " + Math.floor(eta), 450, 340 );
         }
 

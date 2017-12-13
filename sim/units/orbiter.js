@@ -8,7 +8,7 @@ Orbiter.build = function( _name, _position, _faction ) {
     this.steering = steering; */
     
     var dynamics = Object.create( Dynamics );
-    var params = { max_alt: 410000, min_alt: 400000, max_speed: 0, max_turn_rate: 0, max_alt_rate: 10 }
+    var params = { min_alt: 400000, max_speed: 0, max_turn_rate: 0, max_alt_rate: 10 }
     dynamics.init( this, params, _position );    
     this.dynamics = dynamics;
     

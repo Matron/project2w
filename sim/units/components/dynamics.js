@@ -21,13 +21,13 @@ var Dynamics = {
         
         //refactor -- take engine into account
         if (this.acceleration != 0) {
-            this.speed = this.speed + ( this.acceleration * (_elapsed / 1000) );       
+                 
 
-            //refactor -- why < 10 ?
-            if ( Math.abs( this.desiredSpeed - this.speed ) < 10 ) {
-                console.log( "---set desired speed of " + this.desiredSpeed + " from " + this.speed );
-                this.speed = this.desiredSpeed;
-                this.acceleration = 0;               
+            if ( Math.abs( this.desiredSpeed - this.speed ) < Math.abs(this.acceleration) ) {              
+                this.acceleration = this.acceleration * 0.9;   
+                if ( Math.abs(this.acceleration) < 0.5) this.acceleration = 0;
+                this.speed = this.speed + ( this.acceleration * (_elapsed / 1000) );  
+                console.log("set acceleration " + this.acceleration.toFixed(2) + " speed " + this.speed);                
             }                
         }
 

@@ -3,15 +3,15 @@ var StateDroneDeploy = {
     
     enter: function( _simObject ) {
         console.log( _simObject.name + " enter state: " + this.name );  
-        if ( _simObject.dynamics.position.alt > 0 ) {                              
+        if ( _simObject.dynamics.position.alt > 399999 ) {                              
             _simObject.stateMachine.changeState( StateDeorbit );
         }
     },
     
     execute: function( _simObject ) {        
-        if ( _simObject.dynamics.position.alt == _simObject.destination.alt ) {
+        if ( _simObject.dynamics.position.alt === _simObject.destination.alt ) {
             _simObject.destination = null;
-            _simObject.stateMachine.changeState( StateScanForResources);
+            _simObject.stateMachine.changeState( StateScanForResources); //refactor - should not be hardcoded
             return;
         }
         if ( _simObject.dynamics.position.alt == 0 && _simObject.destination.alt != 0) {

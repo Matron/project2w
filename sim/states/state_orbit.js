@@ -9,6 +9,8 @@ var StateOrbit = {
         _simObject.dynamics.position.alt = 406400;
         _simObject.dynamics.desiredAltitude = 406400;
         _simObject.dynamics.position.hdg = 90;
+        _simObject.dynamics.max_alt = 410000;
+        _simObject.dynamics.min_alt = 400000; 
  
     },
     
