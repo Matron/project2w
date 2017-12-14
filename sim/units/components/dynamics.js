@@ -1,80 +1,95 @@
+//https://www.grc.nasa.gov/www/k-12/airplane/short.html
 var Dynamics = {
-    init: function( _parentObject, _params, _position ) {
+    init: function( _parentObject, _params, _position, _speed ) {
         this.parentObject = _parentObject;     
-        
-        this.max_alt = _params.max_alt;
-        this.min_alt = _params.min_alt;
-        this.max_speed = _params.max_speed;
-        this.max_acceleration = _params.max_acceleration;
-        this.max_alt_rate = _params.max_alt_rate;                                
-        this.position = _position;
+                
+        //defined by hull
+        this.MAX_ALT = _params.max_alt;
+        this.MIN_ALT = _params.min_alt;
+        //this.max_speed = _params.max_speed; ????
+        this.MAX_TURN_RATE = _params.max_turn_rate;
+        this.HULL_DRAG = _params.hull_drag; 
+        this.MASS = _params.mass;
 
-        this.power = 0; //0 - 100%
-        this.speed = 0;        
-        this.acceleration = 0;
-        this.altitude_rate = 0;
-        this.desiredAltitude = this.position.alt;
+        //defined by motor
+        this.MAX_THRUST = _params.max_thrust;                
 
+        //set by autocontrol
+        this.desiredSpeed = 0;
+        this.desiredAltitude = 0;
+        this.desiredHeading = 0;        
+
+        //dynamics (calculated on update:)   
+        this.power = 0;
+        this.thrust = 0;   
+        this.acceleration = 0;  
+        this.verticalSpeed = 0;
+        this.turnRate = 0;                  
+
+        //wanted updated values ----------------------
+        this.position = _position;       
+        _speed ? this.speed = _speed : this.speed = 0;                     
+        //-------------------------------------------- 
     },
     
     update: function( _elapsed ) {
         
-        //refactor -- take engine into account
-        if (this.acceleration != 0) {
-            this.speed = this.speed + ( this.acceleration * (_elapsed / 1000) );
-            if ( Math.abs( this.desiredSpeed - this.speed ) < Math.abs(this.acceleration * 10) ) {              
-                this.acceleration = this.acceleration * 0.6;                     
-                console.log("set acceleration " + this.acceleration.toFixed(2) + " speed " + this.speed);                
-            }   
-            if ( Math.abs(this.acceleration) < 0.5 || this.speed < 0) {
-                this.acceleration = 0;
-                this.speed = 0;
-                console.log("stopped");
-            }             
+        this.acceleration = ( this.thrust - (this.HULL_DRAG * this.speed * this.speed )) / this.mass;                
+        if (this.acceleration !== 0) {
+            // => gives this.speed 
+            //this.speed = this.speed + ( this.acceleration * (_elapsed / 1000) );
         }
 
-        if (this.speed > 0) this.position = this.position.addDistance( _elapsed / 1000 * this.speed );  
-
-        if (this.altitude_rate != 0) {    
-            this.position.alt = this.position.alt + ( this.altitude_rate * (_elapsed / 1000) );
-            //refactor: add gradual change in altitude rate
-            if ( Math.abs(this.desiredAltitude - this.position.alt) < Math.abs(this.altitude_rate)) {                                
-                console.log( "---set desired altitude of " + this.desiredAltitude + " from " + this.position.alt );
-                this.position.alt = this.desiredAltitude;
-                this.altitude_rate = 0;                
-            }
+        if (this.verticalSpeed !== 0) {
+            // => gives this.position.alt
         }
+
+        if (this.turnRate !== 0) {
+            // => gives this.position.hdg
+        }
+
+        //final output ---------------
+        // => this.position.lat = lat;
+        // => this.position.lon = lon;
+        // => this.position.alt = alt;
+        // => this.position.hdg = hdg; 
     },
     
-    setHeading: function( _heading ) {
-        //refactor - use max_turn_rate to move to new heading
-        this.position.hdg = _heading;
-    },
-    
-    setPower: function( _power ) {
-        
-    },
-    
-    setSpeed: function( _speed, _acceleration ) {
+
+    //autocontrol commands-----------------------------------------------------
+
+    setSpeed: function( _speed ) {        
         this.desiredSpeed = _speed;
-        if (_acceleration > this.max_acceleration) {
-            this.acceleration = this.max_acceleration;
-        } else {
-            this.acceleration = _acceleration;
-        }
+        // => this.setPower( power );
     },
     
-    setAltitude: function( _altitude, _rate ) {
-        this.desiredAltitude = _altitude;
-        if (this.desiredAltitude < this.min_alt) this.desiredAltitude = this.min_alt;
-        if ( _rate ) {
-            this.altitude_rate = _rate;
-        } else {
-            if ( _altitude > this.position.alt ) {
-                this.altitude_rate = this.max_alt_rate;
-            } else {
-                this.altitude_rate = this.max_alt_rate * -1;
-            }
-        }
-    }
+    setAltitude: function( _altitude ) {
+        this.desiredAltitude = _altitude;        
+        // => this.setPitch( pitch );
+    },
+        
+    setHeading: function( _heading ) {
+        this.desiredHeading = _heading;
+        // => this.setTurn( turn );
+    },
+
+
+    //manual input commands----------------------------------------------------
+
+    // 0 to 100%
+    // acceleration must depend on engine power, hull drag and environment
+    setPower: function( _power ) { 
+        this.thrust = this.MAX_THRUST * _power / 100;
+    },
+
+    // -90 to 90
+    setPitch: function( _pitch ) {
+        // => this.verticalSpeed = 
+    },
+
+    // 0 to 100% of max_turn_rate
+    // velocity of change depends on applied control force, hull specs and environment    
+    setTurn: function( _roll ) {
+        // => this.turnRate = 
+    },    
 }

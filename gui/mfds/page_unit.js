@@ -7,24 +7,9 @@ var PageUnit = {
 
     init: function( _simObject ) {
         this.simObject = _simObject;        
-        this.sliders = new Array(); 
+        
 
-        if (_simObject.faction === "player" ) {
-            var sliderAlt = new Slider( _simObject.dynamics.min_alt, _simObject.dynamics.max_alt, _simObject.dynamics.desiredAltitude,
-                                        _simObject.dynamics.setAltitude, _simObject.dynamics );
-            sliderAlt.x = 400;
-            sliderAlt.y = 60;
-            //refactor! - try to replace captureMouse
-            sliderAlt.captureMouse( this.mfd.$canvas );
-            this.sliders.push( sliderAlt );
-
-            var sliderPower = new Slider( 0, 100, _simObject.dynamics.power,
-                                        _simObject.dynamics.setPower, _simObject.dynamics );                                      
-            sliderPower.x = 120;
-            sliderPower.y = 60;
-            sliderPower.captureMouse( this.mfd.$canvas );
-            this.sliders.push ( sliderPower );
-        }    
+    
 
         /* this.image.onload = () => { this.ready = true; };        
         this.image.src = _simObject.graphics.unitDiagram; */
@@ -37,6 +22,7 @@ var PageUnit = {
         _context.fillText( "Page: " + this.name, 240, 20 );
         
         this.buttons = new Array();
+        this.sliders = new Array(); 
 
         if (this.simObject) {
             _context.fillText( "Unit: " + this.simObject.name, 420, 20 );
@@ -55,18 +41,12 @@ var PageUnit = {
                 this.drawContainer( _context );                
             }           
 
-            for (var i=0; i < this.simObject.components.length; i++) {
-                if ( Sensor.isPrototypeOf( this.simObject.components[i] )) {
-                    var button = Object.create( Button );
-                    var c =  this.simObject.components[i];
-                    button.init( 240, 60 + (i*30),
-                                 c.type, c.active ? "#00ff00" : "red", c, c.toggleSensor);
-                    this.buttons.push( button );
-                }
-            } 
-
-            this.sliders.forEach( sld => sld.draw( _context ) );
+            this.drawSensors( _context ); 
             this.buttons.forEach( btn => btn.draw( _context ) );
+
+            this.drawControls( _context );
+            this.sliders.forEach( sld => sld.draw( _context ) );            
+            
 
             //refactor - for test only
             for (var i=0; i<this.simObject.contacts.length; i++) {
@@ -125,6 +105,38 @@ var PageUnit = {
                 _context.fillText( so.destination.lon.toFixed(4) + " : " + so.destination.lat.toFixed(4), 210, 233+(i*30));
             this.buttons.push( button );
         }        
+    },
+
+    drawSensors: function( _context ) {
+        for (var i=0; i < this.simObject.components.length; i++) {
+            if ( Sensor.isPrototypeOf( this.simObject.components[i] )) {
+                var button = Object.create( Button );
+                var c =  this.simObject.components[i];
+                button.init( 240, 60 + (i*30),
+                             c.type, c.active ? "#00ff00" : "red", c, c.toggleSensor);
+                this.buttons.push( button );
+            }
+        }
+    },
+
+    drawControls: function( _context ) {
+        if (this.simObject.faction === "player" ) {
+            var sliderAlt = new Slider( this.simObject.dynamics.min_alt, this.simObject.dynamics.max_alt,
+                                        this.simObject.dynamics.desiredAltitude,
+                                        this.simObject.dynamics.setAltitude, this.simObject.dynamics );      
+            sliderAlt.x = 400;
+            sliderAlt.y = 60;
+            //refactor! - try to replace captureMouse
+            sliderAlt.captureMouse( this.mfd.$canvas );
+            this.sliders.push( sliderAlt );
+
+            var sliderPower = new Slider( 0, 100, this.simObject.dynamics.desiredPower,
+                                        this.simObject.dynamics.setPower, this.simObject.dynamics );                                      
+            sliderPower.x = 120;
+            sliderPower.y = 60;
+            sliderPower.captureMouse( this.mfd.$canvas );
+            this.sliders.push ( sliderPower );
+        }
     },
 
     onClick: function( _event ) {

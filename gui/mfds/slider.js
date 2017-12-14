@@ -50,7 +50,7 @@ Slider.prototype.updateValue = function() {
     
     this.value = (handleRange - this.handleY) / handleRange * valueRange + this.min;
     
-    if (typeof this.onchange === 'function' && this.value !== old_value) {
+    if (typeof this.onchange === 'function' && this.value !== old_value) {        
         this.onchange.call( this.object, this.value );
     }
 };
