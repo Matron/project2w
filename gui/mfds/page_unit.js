@@ -65,12 +65,13 @@ var PageUnit = {
         _context.stroke();
         _context.closePath();
 
-        _context.fillText( "Spd: " + Math.floor(this.simObject.dynamics.speed), 20, 180 );
+        _context.fillText( "Spd: " + Math.round(this.simObject.dynamics.speed), 20, 180 );
+        _context.fillText( " HS: " + Math.round(this.simObject.dynamics.horizontalSpeed), 20, 200 );
         _context.fillText( "Acc: " + (this.simObject.dynamics.acceleration).toFixed(1), 20, 160 );
-        _context.fillText( " Vs: " + Math.floor(this.simObject.dynamics.altitude_rate), 450, 160 );
-        _context.fillText( "Alt: " + Math.floor(this.simObject.dynamics.position.alt), 450, 180 );
-        _context.fillText( "Hdg: " + Math.floor(this.simObject.dynamics.position.hdg), 235, 340 );
-        _context.fillText( "Thrust: " + Math.floor(this.simObject.dynamics.thrust), 275, 340 );
+        _context.fillText( " Vs: " + Math.round(this.simObject.dynamics.verticalSpeed), 450, 160 );
+        _context.fillText( "Alt: " + Math.round(this.simObject.dynamics.position.alt), 450, 180 );
+        _context.fillText( "Hdg: " + Math.round(this.simObject.dynamics.position.hdg), 235, 340 );
+        _context.fillText( "Thrust: " + Math.round(this.simObject.dynamics.thrust), 275, 340 );
     },
 
     drawNavigationData: function( _context ) {
@@ -79,7 +80,7 @@ var PageUnit = {
             _context.fillText( "Rng: " + ( dist / 1000).toFixed(1), 20, 340 );
 
             var eta = dist / this.simObject.dynamics.speed;            
-            _context.fillText( "ETE: " + Math.floor(eta), 450, 340 );
+            _context.fillText( "ETE: " + Math.round(eta), 450, 340 );
         }
 
         _context.fillText( "Lon: " + this.simObject.dynamics.position.lon.toFixed(4) +
@@ -124,7 +125,7 @@ var PageUnit = {
         if (this.simObject.faction === "player" && this.simObject.stateMachine.currentState !== StateOrbit ) {
 
             var sliderPower = new Slider( 0, 100,
-                                          this.simObject.dynamics.power,
+                                          this.simObject.dynamics.thrust * 100 / this.simObject.dynamics.MAX_THRUST,
                                           this.simObject.dynamics.setPower, this.simObject.dynamics );                                      
             sliderPower.x = 120;
             sliderPower.y = 60;
@@ -132,21 +133,21 @@ var PageUnit = {
             this.sliders.push ( sliderPower );
             
             var sliderTurn = new Slider( -100, 100,
-                                         this.simObject.dynamics.turnRate,
+                                         this.simObject.dynamics.turnRate * 100 / this.simObject.dynamics.AGILITY,
                                          this.simObject.dynamics.setTurn, this.simObject.dynamics );                                      
             sliderTurn.x = 160;
             sliderTurn.y = 60;
             sliderTurn.captureMouse( this.mfd.$canvas );
             this.sliders.push ( sliderTurn );
 
-            var sliderAlt = new Slider( this.simObject.dynamics.min_alt, this.simObject.dynamics.max_alt,
-                                        this.simObject.dynamics.desiredAltitude,
-                                        this.simObject.dynamics.setAltitude, this.simObject.dynamics );      
-            sliderAlt.x = 400;
-            sliderAlt.y = 60;
-            //refactor! - try to replace captureMouse
-            sliderAlt.captureMouse( this.mfd.$canvas );
-            this.sliders.push( sliderAlt );
+            //refactor - change for pitchControlInput instead of setting pitch directly
+            var sliderPitch = new Slider( -90, 90,
+                                        this.simObject.dynamics.pitch,
+                                        this.simObject.dynamics.setPitch, this.simObject.dynamics );      
+            sliderPitch.x = 400;
+            sliderPitch.y = 60;
+            sliderPitch.captureMouse( this.mfd.$canvas );
+            this.sliders.push( sliderPitch );
 
         }
     },

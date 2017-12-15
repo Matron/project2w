@@ -1,60 +1,68 @@
 //https://www.grc.nasa.gov/www/k-12/airplane/short.html
 var Dynamics = {
-    init: function( _parentObject, _params, _position, _speed ) {
+    init: function( _parentObject, _params, _position ) {
         this.parentObject = _parentObject;     
                 
-        //defined by hull
+        //constants defined by hull
         this.MAX_ALT = _params.max_alt;
         this.MIN_ALT = _params.min_alt;
-        //this.max_speed = _params.max_speed; ????
-        this.MAX_TURN_RATE = _params.max_turn_rate;
+        this.AGILITY = _params.agility;
         this.HULL_DRAG = _params.hull_drag; 
         this.MASS = _params.mass;
 
-        //defined by motor
+        //constants defined by motor
         this.MAX_THRUST = _params.max_thrust;                
 
-        //set by autocontrol
+        //target values set by autocontrol
         this.desiredSpeed = 0;
         this.desiredAltitude = 0;
         this.desiredHeading = 0;        
 
-        //dynamics (calculated on update:)   
-        this.power = 0;
+        //dynamics (calculated on update:)  
         this.thrust = 0;   
-        this.acceleration = 0;  
+        this.acceleration = 0;
+        this.speed = 0;           
         this.verticalSpeed = 0;
-        this.turnRate = 0;                  
-
-        //wanted updated values ----------------------
-        this.position = _position;       
-        _speed ? this.speed = _speed : this.speed = 0;                     
-        //-------------------------------------------- 
+        this.horizontalSpeed = 0;
+        this.turnRate = 0;  
+        this.pitch = 0;                
+        this.position = _position;
     },
     
     update: function( _elapsed ) {
 
+        // => gives this.speed
         this.acceleration = ( this.thrust - (this.HULL_DRAG * this.speed * this.speed )) / this.MASS;                        
-        if (this.acceleration !== 0) {
-            // => gives this.speed 
+        if (this.acceleration !== 0) {             
             this.speed += this.acceleration * (_elapsed / 1000);
         }
 
-        if (this.verticalSpeed !== 0) {
-            // => gives this.position.alt
+        // => gives this.position.alt
+        this.verticalSpeed  = this.speed * Math.sin( this.pitch * Math.PI/180 );
+        if (this.verticalSpeed !== 0) {  
+            this.horizontalSpeed = this.speed * Math.cos( this.pitch * Math.PI/180 );      
+            
+            this.position.alt += this.verticalSpeed + (_elapsed / 1000);
+            if (this.position.alt > this.MAX_ALT) {
+                this.position.alt = this.MAX_ALT;
+                this.verticalSpeed = 0;
+            }
+            if (this.position.alt < this.MIN_ALT) {
+                this.position.alt = this.MIN_ALT;
+                this.verticalSpeed = 0;
+            }
+        } else {
+            this.horizontalSpeed = this.speed;
         }
 
-        if (this.turnRate !== 0) {
-            // => gives this.position.hdg
+        // => gives this.position.hdg
+        if (this.turnRate !== 0) {            
             this.position.hdg += this.turnRate * (_elapsed / 1000);
             this.position.hdg = Math.round((this.position.hdg + 360 ) % 360);
-            console.log("heading " + this.position.hdg);
         }
-
-        //final output ---------------
+        
+        // => gives this.position.lat and lon
         if (this.speed > 0) this.position = this.position.addDistance( this.speed *_elapsed / 1000 );
-        // => this.position.alt = alt;
-        // => this.position.hdg = hdg; 
     },
     
 
@@ -80,20 +88,20 @@ var Dynamics = {
 
     // 0 to 100%
     // acceleration must depend on engine power, hull drag and environment
-    setPower: function( _power ) { 
-        this.power = _power;
-        this.thrust = this.MAX_THRUST * _power / 100;        
+    setPower: function( _powerControlInput ) { 
+        this.thrust = _powerControlInput * this.MAX_THRUST / 100;        
     },
 
     // -90 to 90
+    //refactor - change for pitchControlInput and agility instead of setting pitch directly
     setPitch: function( _pitch ) {
         // => this.verticalSpeed = 
+        this.pitch = _pitch;        
     },
 
-    // 0 to 100% of max_turn_rate
+    // 0 to 100% of agility
     // velocity of change depends on applied control force, hull specs and environment    
-    setTurn: function( _turnRate ) {
-        this.turnRate = this.MAX_TURN_RATE * _turnRate / 100;
-        console.log( this.parentObject.name + " turn at " + this.turnRate );
+    setTurn: function( _turnControlInput ) {
+        this.turnRate = _turnControlInput * this.AGILITY / 100;
     },    
 }
