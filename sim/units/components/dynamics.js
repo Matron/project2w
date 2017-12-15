@@ -47,6 +47,8 @@ var Dynamics = {
         if (this.turnRate !== 0) {
             // => gives this.position.hdg
             this.position.hdg += this.turnRate * (_elapsed / 1000);
+            this.position.hdg = Math.round((this.position.hdg + 360 ) % 360);
+            console.log("heading " + this.position.hdg);
         }
 
         //final output ---------------
