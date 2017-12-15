@@ -5,9 +5,11 @@ Drone.build = function( _name, _position, _faction ) {
         
     var params = { max_alt: 0,
                    min_alt: -300,
-                   max_speed: 0,
-                   max_acceleration: 29.4,
-                   max_alt_rate: 3 };
+                   max_turn_rate: 10,
+                   mass: 2000,
+                   hull_drag: 10,
+                   max_thrust: 3800 }; //https://en.wikipedia.org/wiki/Power_Jets_W.1
+
     var dynamics = Object.create( Dynamics );                   
     dynamics.init( this, params, _position );
     this.dynamics = dynamics;

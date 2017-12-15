@@ -55,8 +55,8 @@ var PageSatellite = {
         Sim.sectors.forEach( se => { 
             var tl_lon = (se.corner_tl.lon * (this.mfd.$canvas.width / 2) / 180) + this.mfd.$canvas.width / 2;
             var tl_lat = (se.corner_tl.lat * -1 * (this.mfd.$canvas.height / 2) / 90) + this.mfd.$canvas.height / 2;
-            var br_lon = ((se.corner_tl.lon + 10) * (this.mfd.$canvas.width / 2) / 180) + this.mfd.$canvas.width / 2;
-            var br_lat = ((se.corner_tl.lat - 10) * -1 * (this.mfd.$canvas.height / 2) / 90) + this.mfd.$canvas.height / 2;
+            var br_lon = ((se.corner_tl.lon + se.side) * (this.mfd.$canvas.width / 2) / 180) + this.mfd.$canvas.width / 2;
+            var br_lat = ((se.corner_tl.lat - se.side) * -1 * (this.mfd.$canvas.height / 2) / 90) + this.mfd.$canvas.height / 2;
             var w = Math.abs( tl_lon - br_lon );
             var l = Math.abs( tl_lat - br_lat );                       
             this.displayedSectors.push( { sector: se, rect: { x: tl_lon, y: tl_lat, width: w, height: l} } );

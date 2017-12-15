@@ -5,7 +5,7 @@ var Sector = {
     //map           --> depth
     corner_tl: new GeoLocation(), //size is 5 * 5 degrees
     name: "",
-    side: 10, //size of the sector sid ein degrees
+    side: 5, //size of the sector side in degrees
 
     init: function( _pos, _name, _side ) {
         //create objects and environment (variable)

@@ -33,11 +33,11 @@ var Dynamics = {
     },
     
     update: function( _elapsed ) {
-        
-        this.acceleration = ( this.thrust - (this.HULL_DRAG * this.speed * this.speed )) / this.mass;                
+
+        this.acceleration = ( this.thrust - (this.HULL_DRAG * this.speed * this.speed )) / this.MASS;                        
         if (this.acceleration !== 0) {
             // => gives this.speed 
-            //this.speed = this.speed + ( this.acceleration * (_elapsed / 1000) );
+            this.speed += this.acceleration * (_elapsed / 1000);
         }
 
         if (this.verticalSpeed !== 0) {
@@ -46,11 +46,11 @@ var Dynamics = {
 
         if (this.turnRate !== 0) {
             // => gives this.position.hdg
+            this.position.hdg += this.turnRate * (_elapsed / 1000);
         }
 
         //final output ---------------
-        // => this.position.lat = lat;
-        // => this.position.lon = lon;
+        if (this.speed > 0) this.position = this.position.addDistance( this.speed *_elapsed / 1000 );
         // => this.position.alt = alt;
         // => this.position.hdg = hdg; 
     },
@@ -79,7 +79,8 @@ var Dynamics = {
     // 0 to 100%
     // acceleration must depend on engine power, hull drag and environment
     setPower: function( _power ) { 
-        this.thrust = this.MAX_THRUST * _power / 100;
+        this.power = _power;
+        this.thrust = this.MAX_THRUST * _power / 100;        
     },
 
     // -90 to 90
@@ -89,7 +90,8 @@ var Dynamics = {
 
     // 0 to 100% of max_turn_rate
     // velocity of change depends on applied control force, hull specs and environment    
-    setTurn: function( _roll ) {
-        // => this.turnRate = 
+    setTurn: function( _turnRate ) {
+        this.turnRate = this.MAX_TURN_RATE * _turnRate / 100;
+        console.log( this.parentObject.name + " turn at " + this.turnRate );
     },    
 }

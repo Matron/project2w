@@ -24,11 +24,10 @@ var Sim = {
         var drone = Object.create( Drone);   
         var pos = new GeoLocation( -35.8669, -36.1666, 0, 0);
         drone.build( "Drone D", pos, "player" );
-        drone.stateMachine.changeState( StateScanForResources);
-        //orbiter.hasComponent( Container ).addObject( drone);        
+        drone.stateMachine.changeState( StateScanForResources);    
         this.simObjects.push( drone );            
-        var ps = new GeoLocation( -30.8669, -41.1666 );
-        this.createSector( ps, "Sector 1", 10 );
+        var ps = new GeoLocation( -33.3669, -38.6666 );
+        this.createSector( ps, "Sector 1", 5 );
 
         var drone1 = Object.create( Drone);  
         var pos = new GeoLocation();

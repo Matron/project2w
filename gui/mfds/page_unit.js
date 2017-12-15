@@ -70,6 +70,7 @@ var PageUnit = {
         _context.fillText( " Vs: " + Math.floor(this.simObject.dynamics.altitude_rate), 450, 160 );
         _context.fillText( "Alt: " + Math.floor(this.simObject.dynamics.position.alt), 450, 180 );
         _context.fillText( "Hdg: " + Math.floor(this.simObject.dynamics.position.hdg), 235, 340 );
+        _context.fillText( "Thrust: " + Math.floor(this.simObject.dynamics.thrust), 275, 340 );
     },
 
     drawNavigationData: function( _context ) {
@@ -120,7 +121,24 @@ var PageUnit = {
     },
 
     drawControls: function( _context ) {
-        if (this.simObject.faction === "player" ) {
+        if (this.simObject.faction === "player" && this.simObject.stateMachine.currentState !== StateOrbit ) {
+
+            var sliderPower = new Slider( 0, 100,
+                                          this.simObject.dynamics.power,
+                                          this.simObject.dynamics.setPower, this.simObject.dynamics );                                      
+            sliderPower.x = 120;
+            sliderPower.y = 60;
+            sliderPower.captureMouse( this.mfd.$canvas );
+            this.sliders.push ( sliderPower );
+            
+            var sliderTurn = new Slider( -100, 100,
+                                         this.simObject.dynamics.turnRate,
+                                         this.simObject.dynamics.setTurn, this.simObject.dynamics );                                      
+            sliderTurn.x = 160;
+            sliderTurn.y = 60;
+            sliderTurn.captureMouse( this.mfd.$canvas );
+            this.sliders.push ( sliderTurn );
+
             var sliderAlt = new Slider( this.simObject.dynamics.min_alt, this.simObject.dynamics.max_alt,
                                         this.simObject.dynamics.desiredAltitude,
                                         this.simObject.dynamics.setAltitude, this.simObject.dynamics );      
@@ -130,12 +148,6 @@ var PageUnit = {
             sliderAlt.captureMouse( this.mfd.$canvas );
             this.sliders.push( sliderAlt );
 
-            var sliderPower = new Slider( 0, 100, this.simObject.dynamics.desiredPower,
-                                        this.simObject.dynamics.setPower, this.simObject.dynamics );                                      
-            sliderPower.x = 120;
-            sliderPower.y = 60;
-            sliderPower.captureMouse( this.mfd.$canvas );
-            this.sliders.push ( sliderPower );
         }
     },
 

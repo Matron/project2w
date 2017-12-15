@@ -9,7 +9,8 @@ Orbiter.build = function( _name, _position, _faction ) {
     
     var dynamics = Object.create( Dynamics );
     var params = { mass: 100000,
-                   hull_drag: 100 }
+                   hull_drag: 0 } //refactor -- hull drag should never be 0. consider environment (space)
+                   
     dynamics.init( this, params, _position );    
     this.dynamics = dynamics;
     
