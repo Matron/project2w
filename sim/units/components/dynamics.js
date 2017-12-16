@@ -16,7 +16,7 @@ var Dynamics = {
         //target values set by autocontrol
         this.desiredSpeed = 0;
         this.desiredAltitude = 0;
-        this.desiredHeading = 0;        
+        this.desiredHeading = -1;        
 
         //dynamics (calculated on update:)  
         this.thrust = 0;   
@@ -32,9 +32,15 @@ var Dynamics = {
     update: function( _elapsed ) {
 
         // => gives this.speed
-        this.acceleration = ( this.thrust - (this.HULL_DRAG * this.speed * this.speed )) / this.MASS;                        
+        if (this.parentObject.stateMachine.currentState !== StateDeorbit) {            
+            this.acceleration = ( this.thrust - (this.HULL_DRAG * this.speed * this.speed )) / this.MASS;                    
+        }
         if (this.acceleration !== 0) {             
             this.speed += this.acceleration * (_elapsed / 1000);
+            if (this.speed < 0) {
+                this.speed = 0;
+                this.acceleration = 0;
+            }
         }
 
         // => gives this.position.alt
@@ -43,26 +49,34 @@ var Dynamics = {
             this.horizontalSpeed = this.speed * Math.cos( this.pitch * Math.PI/180 );      
             
             this.position.alt += this.verticalSpeed + (_elapsed / 1000);
-            if (this.position.alt > this.MAX_ALT) {
+            if (this.position.alt > this.MAX_ALT ) {
                 this.position.alt = this.MAX_ALT;
                 this.verticalSpeed = 0;
+                this.pitch = 0;
             }
             if (this.position.alt < this.MIN_ALT) {
                 this.position.alt = this.MIN_ALT;
                 this.verticalSpeed = 0;
+                this.pitch = 0;
             }
         } else {
             this.horizontalSpeed = this.speed;
         }
-
+    
         // => gives this.position.hdg
         if (this.turnRate !== 0) {            
             this.position.hdg += this.turnRate * (_elapsed / 1000);
             this.position.hdg = Math.round((this.position.hdg + 360 ) % 360);
-        }
+            if (this.desiredHeading > 0 && Math.abs( this.desiredHeading - this.position.hdg ) < Math.abs(this.turnRate * (_elapsed / 1000)) ) {
+                this.position.hdg = this.desiredHeading;
+                this.turnRate = 0;
+                this.desiredHeading = -1;
+            }
         
+        }
+
         // => gives this.position.lat and lon
-        if (this.speed > 0) this.position = this.position.addDistance( this.speed *_elapsed / 1000 );
+        if (this.horizontalSpeed > 0) this.position = this.position.addDistance( this.horizontalSpeed *_elapsed / 1000 );
     },
     
 
@@ -78,14 +92,18 @@ var Dynamics = {
         // => this.setPitch( pitch );
     },
         
-    setHeading: function( _heading ) {
+    setHeading: function( _heading, _turnControlInput ) {
         this.desiredHeading = _heading;
-        // => this.setTurn( turn );
+        if (this.desiredHeading > (this.position.hdg + 180) || this.desiredHeading < this.position.hdg) {
+            this.setTurn( _turnControlInput * -1);
+        } else {
+            this.setTurn( _turnControlInput );
+        }        
     },
 
 
     //manual input commands----------------------------------------------------
-
+    
     // 0 to 100%
     // acceleration must depend on engine power, hull drag and environment
     setPower: function( _powerControlInput ) { 
@@ -101,7 +119,7 @@ var Dynamics = {
 
     // 0 to 100% of agility
     // velocity of change depends on applied control force, hull specs and environment    
-    setTurn: function( _turnControlInput ) {
+    setTurn: function( _turnControlInput ) {        
         this.turnRate = _turnControlInput * this.AGILITY / 100;
     },    
 }

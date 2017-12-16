@@ -70,7 +70,7 @@ var PageUnit = {
         _context.fillText( "Acc: " + (this.simObject.dynamics.acceleration).toFixed(1), 20, 160 );
         _context.fillText( " Vs: " + Math.round(this.simObject.dynamics.verticalSpeed), 450, 160 );
         _context.fillText( "Alt: " + Math.round(this.simObject.dynamics.position.alt), 450, 180 );
-        _context.fillText( "Hdg: " + Math.round(this.simObject.dynamics.position.hdg), 235, 340 );
+        _context.fillText( "Hdg: " + Math.round(this.simObject.dynamics.position.hdg), 230, 340 );
         _context.fillText( "Thrust: " + Math.round(this.simObject.dynamics.thrust), 275, 340 );
     },
 
@@ -122,7 +122,9 @@ var PageUnit = {
     },
 
     drawControls: function( _context ) {
-        if (this.simObject.faction === "player" && this.simObject.stateMachine.currentState !== StateOrbit ) {
+        if (this.simObject.faction === "player" && 
+            this.simObject.stateMachine.currentState !== StateOrbit &&
+            this.simObject.stateMachine.currentState !== StateDeorbit ) {
 
             var sliderPower = new Slider( 0, 100,
                                           this.simObject.dynamics.thrust * 100 / this.simObject.dynamics.MAX_THRUST,
