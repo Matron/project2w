@@ -20,7 +20,7 @@ var SimObject = {
         //update state
         if (this.stateMachine) this.stateMachine.update();
         
-        //update dynamics        
+        //update dynamics     
         if (this.dynamics && this.parentObject === null) this.dynamics.update( _elapsed );
     },
 

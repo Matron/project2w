@@ -51,7 +51,7 @@ var Sensor = {
     checkDetection: function( _simObject ) {
         var dist = this.parentObject.dynamics.position.calculateDistance( _simObject.dynamics.position );
         var altDiff = Math.abs( this.parentObject.dynamics.position.alt - _simObject.dynamics.position.alt );
-        if ( dist < this.range && altDiff < 1000 ) {   
+        if ( dist < this.range ) { //&& altDiff < 1000 ) {   
             if ( this.active ) {
                 Sim.detectedObjects.push( _simObject );
                 this.parentObject.contacts.push( { so: _simObject, dist: dist } );            

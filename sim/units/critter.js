@@ -5,9 +5,11 @@ Critter.build = function( _name, _position, _faction ) {
     
     var params = { max_alt: 0,
                    min_alt: -500,
-                   max_speed: 0,
-                   max_acceleration: 5,
-                   max_alt_rate: 5 };
+                   agility: 10,
+                   mass: 150,
+                   hull_drag: 10,
+                   max_thrust: 100
+                };
     var dynamics = Object.create( Dynamics );                   
     dynamics.init( this, params, _position );
     this.dynamics = dynamics;
