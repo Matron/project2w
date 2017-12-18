@@ -4,25 +4,29 @@ var PageUnit = {
     simObject: null,
     image: new Image(),
     //ready: false,    
+    state: null,
 
     init: function( _simObject ) {
         this.simObject = _simObject;  
         this.sliders = new Array();         
+        this.state = _simObject.stateMachine.currentState;
         this.drawControls();
         /* this.image.onload = () => { this.ready = true; };        
         this.image.src = _simObject.graphics.unitDiagram; */
     },
 
-    draw: function( _context ) {
+    draw: function( _context ) {      
+
         _context.clearRect( 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );        
         _context.fillStyle = "#13cfdb";
         _context.fillText( "Time: " + Date.now(), 20, 20 );
-        _context.fillText( "Page: " + this.name, 240, 20 );
-        
-        this.buttons = new Array();
-         
+        _context.fillText( "Page: " + this.name, 240, 20 );      
+
+        this.buttons = new Array();       
 
         if (this.simObject) {
+            if ( this.simObject.stateMachine.currentState !== this.state ) this.init( this.simObject );
+            
             _context.fillText( "Unit: " + this.simObject.name, 420, 20 );
             if (this.simObject.stateMachine.currentState) 
                 _context.fillText( this.simObject.stateMachine.currentState.name, 420, 40 );
@@ -46,7 +50,7 @@ var PageUnit = {
                 _context.fillText( this.simObject.contacts[i].so.name + " D:" + 
                                    Math.round(this.simObject.contacts[i].dist), 300, 200 + (i*20) );
             }
-
+            
             this.buttons.forEach( btn => btn.draw( _context ) );            
             this.sliders.forEach( sld => sld.draw( _context ) );  
         }
