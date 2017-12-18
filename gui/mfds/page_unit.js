@@ -3,7 +3,7 @@ var PageUnit = {
     mfd: null,
     simObject: null,
     image: new Image(),
-    ready: false,    
+    //ready: false,    
 
     init: function( _simObject ) {
         this.simObject = _simObject;  
@@ -65,6 +65,7 @@ var PageUnit = {
         _context.fillText( " HS: " + Math.round(this.simObject.dynamics.horizontalSpeed), 20, 200 );
         _context.fillText( "Acc: " + (this.simObject.dynamics.acceleration).toFixed(1), 20, 160 );
         _context.fillText( " Vs: " + Math.round(this.simObject.dynamics.verticalSpeed), 450, 160 );
+        _context.fillText( "Pth: " + Math.round(this.simObject.dynamics.pitch), 450, 200 );
         _context.fillText( "Alt: " + Math.round(this.simObject.dynamics.position.alt), 450, 180 );
         _context.fillText( "Hdg: " + Math.round(this.simObject.dynamics.position.hdg), 230, 340 );
         _context.fillText( "Thrust: " + Math.round(this.simObject.dynamics.thrust), 275, 340 );

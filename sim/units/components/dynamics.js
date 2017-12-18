@@ -16,7 +16,8 @@ var Dynamics = {
         //target values set by autocontrol
         this.desiredSpeed = 0;
         this.desiredAltitude = 0;
-        this.desiredHeading = -1;        
+        this.desiredHeading = -1;  
+        this.altitudeArmed = false;      
 
         //dynamics (calculated on update:)  
         this.thrust = 0;   
@@ -41,12 +42,25 @@ var Dynamics = {
                 this.acceleration = 0;
             }
         }
-
-        this.verticalSpeed  = this.speed * Math.sin( this.pitch * Math.PI/180 );
-        if (this.verticalSpeed !== 0) {  
+        
+        if (this.parentObject.stateMachine.currentState !== StateDive ) {
+            this.verticalSpeed  = this.speed * Math.sin( this.pitch * Math.PI/180 );        
+        }
+        if (this.verticalSpeed !== 0) {          
             this.horizontalSpeed = this.speed * Math.cos( this.pitch * Math.PI/180 );      
             
             this.position.alt += this.verticalSpeed + (_elapsed / 1000);
+
+            if (this.altitudeArmed) {
+                if (( this.verticalSpeed > 0 && this.position.alt > this.desiredAltitude ) ||
+                    ( this.verticalSpeed < 0 && this.position.alt < this.desiredAltitude )){
+                    this.verticalSpeed = 0;
+                    this.position.alt = this.desiredAltitude
+                    this.altitudeArmed = false;
+                    console.log("reached desired alt");
+                } 
+            }
+
             if (this.position.alt > this.MAX_ALT && this.parentObject.stateMachine.currentState !== StateDeorbit) {
                 this.position.alt = this.MAX_ALT;
                 this.verticalSpeed = 0;
@@ -83,8 +97,25 @@ var Dynamics = {
     },
     
     setAltitude: function( _altitude ) {
-        this.desiredAltitude = _altitude;        
-        // => this.setPitch( pitch );
+        this.desiredAltitude = _altitude;
+
+        if (this.desiredAltitude > this.MAX_ALT) this.desiredAltitude =  this.MAX_ALT;
+        if (this.desiredAltitude < this.MIN_ALT) this.desiredAltitude = this.MIN_ALT;         
+           
+        if (this.speed === 0) {
+            if (this.desiredAltitude > this.position.alt) {
+                this.verticalSpeed = 5;
+            } else {
+                this.verticalSpeed = -5;
+            }        
+        } else {
+            if (this.desiredAltitude > this.position.alt) {
+                this.setPitch( 5 );
+            } else {
+                this.setPitch( -5 );
+            }
+        }
+        this.altitudeArmed = true;
     },
         
     setHeading: function( _heading, _turnControlInput ) {

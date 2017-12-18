@@ -10,9 +10,7 @@ var StateDeorbit = {
     execute: function( _simObject ) {       
         var dist = _simObject.dynamics.position.calculateDistance( _simObject.destination ); 
         _simObject.dynamics.acceleration = (_simObject.dynamics.desiredSpeed - (_simObject.dynamics.speed * _simObject.dynamics.speed)) / (2 * dist);
-        var pitch = (Math.atan( _simObject.dynamics.position.alt / dist ) * 180 / Math.PI) * -1;
-        console.log( "pitch: " + pitch);
-        _simObject.dynamics.setPitch( pitch );
+        _simObject.dynamics.setPitch( (Math.atan( _simObject.dynamics.position.alt / dist ) * 180 / Math.PI) * -1 );
         _simObject.dynamics.setHeading( _simObject.dynamics.position.calculateBearing( _simObject.destination ), 50 );   
         
         if ( dist < 5 && _simObject.dynamics.position.alt < 5) {

@@ -7,7 +7,7 @@ var StateDive = {
     },
     
     execute: function( _simObject ) {       
-        if ( _simObject.dynamics.position.alt == _simObject.dynamics.desiredAltitude ) {
+        if ( _simObject.dynamics.position.alt === _simObject.dynamics.desiredAltitude ) {
             _simObject.stateMachine.revertToPreviousState();
         }
     },
