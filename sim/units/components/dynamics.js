@@ -31,7 +31,6 @@ var Dynamics = {
     
     update: function( _elapsed ) {
 
-        // => gives this.speed
         if (this.parentObject.stateMachine.currentState !== StateDeorbit) {            
             this.acceleration = ( this.thrust - (this.HULL_DRAG * this.speed * this.speed )) / this.MASS;                    
         }
@@ -43,7 +42,6 @@ var Dynamics = {
             }
         }
 
-        // => gives this.position.alt
         this.verticalSpeed  = this.speed * Math.sin( this.pitch * Math.PI/180 );
         if (this.verticalSpeed !== 0) {  
             this.horizontalSpeed = this.speed * Math.cos( this.pitch * Math.PI/180 );      
@@ -62,8 +60,7 @@ var Dynamics = {
         } else {
             this.horizontalSpeed = this.speed;
         }
-    
-        // => gives this.position.hdg
+
         if (this.turnRate !== 0) {            
             this.position.hdg += this.turnRate * (_elapsed / 1000);
             this.position.hdg = Math.round((this.position.hdg + 360 ) % 360);
@@ -74,7 +71,6 @@ var Dynamics = {
             }        
         }
 
-        // => gives this.position.lat and lon
         if (this.horizontalSpeed > 0) this.position = this.position.addDistance( this.horizontalSpeed *_elapsed / 1000 );
     },
     
