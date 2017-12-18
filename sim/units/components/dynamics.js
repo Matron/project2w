@@ -49,7 +49,7 @@ var Dynamics = {
             this.horizontalSpeed = this.speed * Math.cos( this.pitch * Math.PI/180 );      
             
             this.position.alt += this.verticalSpeed + (_elapsed / 1000);
-            if (this.position.alt > this.MAX_ALT ) {
+            if (this.position.alt > this.MAX_ALT && this.parentObject.stateMachine.currentState !== StateDeorbit) {
                 this.position.alt = this.MAX_ALT;
                 this.verticalSpeed = 0;
                 this.pitch = 0;
@@ -71,8 +71,7 @@ var Dynamics = {
                 this.position.hdg = this.desiredHeading;
                 this.turnRate = 0;
                 this.desiredHeading = -1;
-            }
-        
+            }        
         }
 
         // => gives this.position.lat and lon
@@ -113,7 +112,6 @@ var Dynamics = {
     // -90 to 90
     //refactor - change for pitchControlInput and agility instead of setting pitch directly
     setPitch: function( _pitch ) {
-        // => this.verticalSpeed = 
         this.pitch = _pitch;        
     },
 

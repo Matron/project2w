@@ -3,13 +3,15 @@ var StateDroneDeploy = {
     
     enter: function( _simObject ) {
         console.log( _simObject.name + " enter state: " + this.name );  
-         if ( _simObject.dynamics.position.alt > 100000 ) {  //refactor - should not be hardcoded               
+        if ( _simObject.dynamics.position.alt > 100000 ) {  //refactor - should not be hardcoded               
             _simObject.stateMachine.changeState( StateDeorbit );
+        } else if ( _simObject.dynamics.position.alt > _simObject.destination.alt ) {
+            _simObject.stateMachine.changeState( StateDive );
         }
     },
     
     execute: function( _simObject ) {     
-        if ( _simObject.dynamics.position.alt === _simObject.destination.alt ) {
+/*         if ( _simObject.dynamics.position.alt === _simObject.destination.alt ) {
             _simObject.destination = null;
             _simObject.stateMachine.changeState( StateScanForResources); //refactor - should not be hardcoded
             return;
@@ -20,8 +22,8 @@ var StateDroneDeploy = {
                                        _simObject.dynamics.position.lon - 5 );
             Sim.createSector( pos, "Sector " + _simObject.name, 10 );
             
-            if ( _simObject.destination.alt < 0 ) _simObject.stateMachine.changeState( StateDive );
-        }        
+            if ( _simObject.destination.alt < 0 ) 
+        }    */     
     },
         
     exit: function( _simObject ) {

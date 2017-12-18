@@ -6,11 +6,9 @@ var PageUnit = {
     ready: false,    
 
     init: function( _simObject ) {
-        this.simObject = _simObject;        
-        
-
-    
-
+        this.simObject = _simObject;  
+        this.sliders = new Array();         
+        this.drawControls();
         /* this.image.onload = () => { this.ready = true; };        
         this.image.src = _simObject.graphics.unitDiagram; */
     },
@@ -22,7 +20,7 @@ var PageUnit = {
         _context.fillText( "Page: " + this.name, 240, 20 );
         
         this.buttons = new Array();
-        this.sliders = new Array(); 
+         
 
         if (this.simObject) {
             _context.fillText( "Unit: " + this.simObject.name, 420, 20 );
@@ -41,18 +39,16 @@ var PageUnit = {
                 this.drawContainer( _context );                
             }           
 
-            this.drawSensors( _context ); 
-            this.buttons.forEach( btn => btn.draw( _context ) );
-
-            this.drawControls( _context );
-            this.sliders.forEach( sld => sld.draw( _context ) );            
-            
+            this.drawSensors( _context );                       
 
             //refactor - for test only
             for (var i=0; i<this.simObject.contacts.length; i++) {
                 _context.fillText( this.simObject.contacts[i].so.name + " D:" + 
                                    Math.round(this.simObject.contacts[i].dist), 300, 200 + (i*20) );
             }
+
+            this.buttons.forEach( btn => btn.draw( _context ) );            
+            this.sliders.forEach( sld => sld.draw( _context ) );  
         }
     },
     
@@ -121,7 +117,7 @@ var PageUnit = {
         }
     },
 
-    drawControls: function( _context ) {
+    drawControls: function() {
         if (this.simObject.faction === "player" && 
             this.simObject.stateMachine.currentState !== StateOrbit &&
             this.simObject.stateMachine.currentState !== StateDeorbit ) {
@@ -149,8 +145,7 @@ var PageUnit = {
             sliderPitch.x = 400;
             sliderPitch.y = 60;
             sliderPitch.captureMouse( this.mfd.$canvas );
-            this.sliders.push( sliderPitch );
-
+            this.sliders.push( sliderPitch );            
         }
     },
 

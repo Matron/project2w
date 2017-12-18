@@ -3,7 +3,7 @@ var StateDive = {
     
     enter: function( _simObject ) {
         console.log( _simObject.name + " enter state: " + this.name );  
-        _simObject.dynamics.setAltitude( _simObject.destination.alt, -3 );
+        _simObject.dynamics.setAltitude( _simObject.destination.alt );
     },
     
     execute: function( _simObject ) {       

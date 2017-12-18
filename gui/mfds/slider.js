@@ -44,6 +44,7 @@ Slider.prototype.draw = function(context) {
 };
 
 Slider.prototype.updateValue = function() {
+    console.log("update value");
     var old_value = this.value,
         handleRange = this.height - this.handleHeight,
         valueRange = this.max - this.min;
@@ -56,6 +57,7 @@ Slider.prototype.updateValue = function() {
 };
 
 Slider.prototype.updatePosition = function() {
+    console.log("update position");
     var handleRange = this.height - this.handleHeight,
         valueRange = this.max - this.min;
     
