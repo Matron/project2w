@@ -4,53 +4,57 @@ var PageSatellite = {
     mfd: null,
     radius: 7,
     background: new Image(),
-    imageReady: false,
-    showSpectral: true,
+    layerBio: null,
+    context: null,
 
     init: function() {
         this.background.onload = () => { this.ready = true; };        
         this.background.src = "gui/mfds/satmap.jpg"; 
+
+        //layer bio
+        var imageData = this.context.createImageData(200, 200);
+
     },
 
-    draw: function( _context ) {
-        _context.clearRect( 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );
+    draw: function( ) {
+        this.context.clearRect( 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );
         
-        if (this.ready) _context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
+        if (this.ready) this.context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
 
-        _context.fillStyle = "#13cfdb";
-        _context.fillText( "Time: " + Date.now(), 20, 20 );
-        _context.fillText( "Page: " + this.name, 200, 20 );
+        this.context.fillStyle = "#13cfdb";
+        this.context.fillText( "Time: " + Date.now(), 20, 20 );
+        this.context.fillText( "Page: " + this.name, 200, 20 );
 
-        this.drawLines( _context );
+        this.drawLines();
 
-        this.drawAreas( _context );
+        this.drawAreas();
 
-        this.drawObjects( _context );        
+        this.drawObjects();        
     },
     
-    drawLines: function( _context ) {
-        _context.strokeStyle = "#13cfdb";
-        _context.lineWidth = 0.5;
-        _context.beginPath();
-        _context.moveTo( this.mfd.$canvas.width / 2, 0 );
-        _context.lineTo( this.mfd.$canvas.width / 2, this.mfd.$canvas.height );
-        _context.moveTo( 0, this.mfd.$canvas.height / 2 );
-        _context.lineTo( this.mfd.$canvas.width, this.mfd.$canvas.height / 2 );
-        _context.stroke();
-        _context.lineWidth = 0.3;
-        _context.moveTo( 0, this.mfd.$canvas.height / 3 );
-        _context.lineTo( this.mfd.$canvas.width, this.mfd.$canvas.height / 3 );
-        _context.moveTo( 0, this.mfd.$canvas.height * (4/6) );
-        _context.lineTo( this.mfd.$canvas.width, this.mfd.$canvas.height * (4/6) );
-        _context.stroke();
-        _context.closePath();
+    drawLines: function() {
+        this.context.strokeStyle = "#13cfdb";
+        this.context.lineWidth = 0.5;
+        this.context.beginPath();
+        this.context.moveTo( this.mfd.$canvas.width / 2, 0 );
+        this.context.lineTo( this.mfd.$canvas.width / 2, this.mfd.$canvas.height );
+        this.context.moveTo( 0, this.mfd.$canvas.height / 2 );
+        this.context.lineTo( this.mfd.$canvas.width, this.mfd.$canvas.height / 2 );
+        this.context.stroke();
+        this.context.lineWidth = 0.3;
+        this.context.moveTo( 0, this.mfd.$canvas.height / 3 );
+        this.context.lineTo( this.mfd.$canvas.width, this.mfd.$canvas.height / 3 );
+        this.context.moveTo( 0, this.mfd.$canvas.height * (4/6) );
+        this.context.lineTo( this.mfd.$canvas.width, this.mfd.$canvas.height * (4/6) );
+        this.context.stroke();
+        this.context.closePath();
     },
     
     //refactor: take into account different length at high latitudes
-    drawAreas: function( _context ) {
-        _context.fillStyle = "#aaaaaa";
-        _context.strokeStyle = "#aaaaaa";
-        _context.lineWidth = 1;
+    drawAreas: function() {
+        this.context.fillStyle = "#aaaaaa";
+        this.context.strokeStyle = "#aaaaaa";
+        this.context.lineWidth = 1;
 
         this.displayedAreas = [];
         Sim.tacticAreas.forEach( se => { 
@@ -62,41 +66,32 @@ var PageSatellite = {
             var l = Math.abs( tl_lat - br_lat );                       
             this.displayedAreas.push( { area: se, rect: { x: tl_lon, y: tl_lat, width: w, height: l} } );
             
-            _context.beginPath();
-            _context.rect( tl_lon, tl_lat, w , l );
-            _context.fillText( se.name, tl_lon - 10, tl_lat - 5);
-            _context.stroke();
-            _context.closePath();
+            this.context.beginPath();
+            this.context.rect( tl_lon, tl_lat, w , l );
+            this.context.fillText( se.name, tl_lon - 10, tl_lat - 5);
+            this.context.stroke();
+            this.context.closePath();
         })
     },
 
-    drawObjects: function( _context ) {
-        _context.fillStyle = "#aaaaaa";
+    drawObjects: function() {
+        this.context.fillStyle = "#aaaaaa";
         this.displayedObjects = [];
         Sim.simObjects.forEach( so => {            
             if (so.parentObject === null && so.dynamics.position.alt > 0) {   
                 
                 var screen = this.worldToScreen( so.dynamics.position.lon, so.dynamics.position.lat );                     
                 this.displayedObjects.push( so );                               
-                _context.beginPath();
-                _context.fillText( so.name, screen.x + 13, screen.y -5);
-                _context.strokeStyle = "#aaaaaa";                
-                _context.lineWidth = 2;
-                _context.beginPath();
-                _context.arc( screen.x, screen.y, this.radius, 0, (Math.PI * 2), true);
-                _context.stroke();
-                _context.closePath();  
+                this.context.beginPath();
+                this.context.fillText( so.name, screen.x + 13, screen.y -5);
+                this.context.strokeStyle = "#aaaaaa";                
+                this.context.lineWidth = 2;
+                this.context.beginPath();
+                this.context.arc( screen.x, screen.y, this.radius, 0, (Math.PI * 2), true);
+                this.context.stroke();
+                this.context.closePath();  
                 so.hasComponent( Graphics ).screenX = screen.x;
                 so.hasComponent( Graphics ).screenY = screen.y;
-                var lon = Math.floor( so.dynamics.position.lon + 180 ),
-                    lat = ( Math.floor( so.dynamics.position.lat - 90 ) * -1 );
-
-                /* if (this.showSpectral) {
-                    _context.save();
-                    _context.fillStyle = Sim.world[lon][lat].bioColor;
-                    _context.fillRect( screen.x, screen.y, 10, 10);                 
-                    _context.restore();
-                } */
             }
         });
     },

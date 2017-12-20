@@ -29,7 +29,7 @@ var Sensor = {
     performSpectralMapping: function() {
         //map fp at low res (1 deg squares)
         //check current position in world array
-        var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
+/*         var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
             lat = ( Math.floor( this.parentObject.dynamics.position.lat - 90 ) * -1 );
 
         var letters = '0123456789ABCDEF';
@@ -38,7 +38,7 @@ var Sensor = {
             color += letters[Math.floor( Sim.world[lon][lat].bioValue * 16)];
         }
         Sim.world[lon][lat].bioColor = color;
-        console.log("Color " + Sim.world[lon][lat].bioColor);
+        console.log("Color " + Sim.world[lon][lat].bioColor); */
     },
 
     performOrbitalRadarMapping: function() {

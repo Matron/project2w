@@ -1,6 +1,7 @@
 var PageTactical = {
     name: "Tactical view",
     mfd: null,
+    context: null,
     seaFloor: new Image(),
     ready: false,
     area: null,    
@@ -11,20 +12,20 @@ var PageTactical = {
         this.seaFloor.src = "sim/areas/seafloor_small.jpg"; 
     },
 
-    draw: function( _context ) {   
-        _context.clearRect( 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );                  
-        _context.fillStyle = "#13cfdb";
-        _context.fillText( "Page: " + this.name, 200, 20 );
-        _context.fillText( "Time: " + Date.now(), 20, 20 );
+    draw: function() {   
+        this.context.clearRect( 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );                  
+        this.context.fillStyle = "#13cfdb";
+        this.context.fillText( "Page: " + this.name, 200, 20 );
+        this.context.fillText( "Time: " + Date.now(), 20, 20 );
 
         if (this.area) {
-            if (this.ready) _context.drawImage( this.seaFloor , 0, 30, this.mfd.$canvas.width, this.mfd.$canvas.height);
-            _context.fillText( "Area: " + this.area.name, 420, 20 );
-            this.drawObjects( _context );
+            if (this.ready) this.context.drawImage( this.seaFloor , 0, 30, this.mfd.$canvas.width, this.mfd.$canvas.height);
+            this.context.fillText( "Area: " + this.area.name, 420, 20 );
+            this.drawObjects();
         }
     },
 
-    drawObjects: function( _context ) {
+    drawObjects: function() {
         this.displayedObjects = []; //used to check for click on object
 
         Sim.simObjects.forEach( so => {            
@@ -34,14 +35,14 @@ var PageTactical = {
                  so.hasComponent( Graphics )
             ) {
                 var screen = this.worldToScreen( so.dynamics.position.lon, so.dynamics.position.lat );
-                so.hasComponent( Graphics ).draw( _context, screen.x, screen.y );
+                so.hasComponent( Graphics ).draw( this.context, screen.x, screen.y );
 
                 for (var i=0; i<so.components.length; i++) {
                     if ( Sensor.isPrototypeOf( so.components[i]) ) {
-                        _context.beginPath();
-                        _context.arc( screen.x, screen.y, this.metersToPixels( so.components[i].range ), 0, (Math.PI * 2), true);
-                        _context.stroke();
-                        _context.closePath();
+                        this.context.beginPath();
+                        this.context.arc( screen.x, screen.y, this.metersToPixels( so.components[i].range ), 0, (Math.PI * 2), true);
+                        this.context.stroke();
+                        this.context.closePath();
                     }
                 }
 
@@ -51,7 +52,7 @@ var PageTactical = {
         
         Sim.detectedObjects.forEach( so => {
             var screen = this.worldToScreen( so.dynamics.position.lon, so.dynamics.position.lat );
-            so.hasComponent( Graphics ).draw( _context, screen.x, screen.y);
+            so.hasComponent( Graphics ).draw( this.context, screen.x, screen.y);
             this.displayedObjects.push( so );
         })
     },

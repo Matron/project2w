@@ -13,12 +13,13 @@ MFD = {
     setPage: function( _page ) {        
         if (_page) this.page = _page;
         _page.mfd = this;
+        _page.context = this.context;        
     },
     
     draw: function() {        
 /*         this.context.clearRect( 0, 0, this.$canvas.width, this.$canvas.height );
         this.context.fillStyle = "#13cfdb";
         this.context.fillText( "Time: " + Date.now(), 20, 20 ); */   
-        this.page.draw( this.context );
+        this.page.draw( );
     }
 }
