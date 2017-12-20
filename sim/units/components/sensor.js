@@ -22,7 +22,28 @@ var Sensor = {
         this.type = _type;   
         this.range = _params.range;
         this.operational = true;
-        this.active = false;     
+        this.active = false;    
+        this.performingSpectralMapping = false; 
+    },
+
+    performSpectralMapping: function() {
+        //map fp at low res (1 deg squares)
+        //check current position in world array
+        var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
+            lat = ( Math.floor( this.parentObject.dynamics.position.lat - 90 ) * -1 );
+
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor( Sim.world[lon][lat].bioValue * 16)];
+        }
+        Sim.world[lon][lat].bioColor = color;
+        console.log("Color " + Sim.world[lon][lat].bioColor);
+    },
+
+    performOrbitalRadarMapping: function() {
+        //map floor at low res (1 deg squares)
+        console.log( this.type + " on " + this.parentObject.name + " is performing orbital radar mapping");
     },
 
     checkSonarDetection: function() {

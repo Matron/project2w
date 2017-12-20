@@ -4,7 +4,8 @@ var PageSatellite = {
     mfd: null,
     radius: 7,
     background: new Image(),
-    ready: false,
+    imageReady: false,
+    showSpectral: true,
 
     init: function() {
         this.background.onload = () => { this.ready = true; };        
@@ -22,7 +23,7 @@ var PageSatellite = {
 
         this.drawLines( _context );
 
-        this.drawSectors( _context );
+        this.drawAreas( _context );
 
         this.drawObjects( _context );        
     },
@@ -46,20 +47,20 @@ var PageSatellite = {
     },
     
     //refactor: take into account different length at high latitudes
-    drawSectors: function( _context ) {
+    drawAreas: function( _context ) {
         _context.fillStyle = "#aaaaaa";
         _context.strokeStyle = "#aaaaaa";
         _context.lineWidth = 1;
 
-        this.displayedSectors = [];
-        Sim.sectors.forEach( se => { 
+        this.displayedAreas = [];
+        Sim.tacticAreas.forEach( se => { 
             var tl_lon = (se.corner_tl.lon * (this.mfd.$canvas.width / 2) / 180) + this.mfd.$canvas.width / 2;
             var tl_lat = (se.corner_tl.lat * -1 * (this.mfd.$canvas.height / 2) / 90) + this.mfd.$canvas.height / 2;
             var br_lon = ((se.corner_tl.lon + se.side) * (this.mfd.$canvas.width / 2) / 180) + this.mfd.$canvas.width / 2;
             var br_lat = ((se.corner_tl.lat - se.side) * -1 * (this.mfd.$canvas.height / 2) / 90) + this.mfd.$canvas.height / 2;
             var w = Math.abs( tl_lon - br_lon );
             var l = Math.abs( tl_lat - br_lat );                       
-            this.displayedSectors.push( { sector: se, rect: { x: tl_lon, y: tl_lat, width: w, height: l} } );
+            this.displayedAreas.push( { area: se, rect: { x: tl_lon, y: tl_lat, width: w, height: l} } );
             
             _context.beginPath();
             _context.rect( tl_lon, tl_lat, w , l );
@@ -87,10 +88,27 @@ var PageSatellite = {
                 _context.closePath();  
                 so.hasComponent( Graphics ).screenX = screen.x;
                 so.hasComponent( Graphics ).screenY = screen.y;
-            }            
+                var lon = Math.floor( so.dynamics.position.lon + 180 ),
+                    lat = ( Math.floor( so.dynamics.position.lat - 90 ) * -1 );
+
+                /* if (this.showSpectral) {
+                    _context.save();
+                    _context.fillStyle = Sim.world[lon][lat].bioColor;
+                    _context.fillRect( screen.x, screen.y, 10, 10);                 
+                    _context.restore();
+                } */
+            }
         });
     },
     
+    getSpecValue: function() {
+
+        var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
+            lat = ( Math.floor( this.parentObject.dynamics.position.lat - 90 ) * -  1 );
+        
+        console.log("Pos: " + lon + " " + lat + " " + Sim.world[lon][lat].color );        
+    },
+
     worldToScreen: function( _lon, _lat ) {
         var screenX = ( _lon * (this.mfd.$canvas.width / 2) / 180) + this.mfd.$canvas.width / 2;
         var screenY = ( _lat * -1 * (this.mfd.$canvas.height / 2) / 90) + this.mfd.$canvas.height / 2;        
@@ -117,10 +135,10 @@ var PageSatellite = {
                 return;
             }
         }
-        for (var j=0; j<this.displayedSectors.length; j++) {
-            if ( utils.containsPoint( this.displayedSectors[j].rect, _event.offsetX, _event.offsetY )) {
-                console.log( this.displayedSectors[j].sector.name + " clicked" );
-                Gui.sectorSelected( this.displayedSectors[j].sector );
+        for (var j=0; j<this.displayedAreas.length; j++) {
+            if ( utils.containsPoint( this.displayedAreas[j].rect, _event.offsetX, _event.offsetY )) {
+                console.log( this.displayedAreas[j].area.name + " clicked" );
+                Gui.areaSelected( this.displayedAreas[j].area );
                 return;
             }
         }

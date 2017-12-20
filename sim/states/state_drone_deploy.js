@@ -7,7 +7,7 @@ var StateDroneDeploy = {
             _simObject.stateMachine.changeState( StateDeorbit );
         } else if ( _simObject.dynamics.position.alt > _simObject.destination.alt ) {
             //refactor -- improve this
-            if (_simObject.dynamics.position.alt === 0) this.createSector( _simObject );
+            if (_simObject.dynamics.position.alt === 0) this.createArea( _simObject );
             _simObject.stateMachine.changeState( StateDive );
         } else if ( _simObject.dynamics.position.alt === _simObject.destination.alt ) {
             _simObject.destination = null;
@@ -30,9 +30,9 @@ var StateDroneDeploy = {
         return false;       
     },
 
-    createSector: function( _simObject ) {
+    createArea: function( _simObject ) {
         var pos = new GeoLocation( _simObject.dynamics.position.lat + 2.5,
                                    _simObject.dynamics.position.lon - 2.5 );
-        Sim.createSector( pos, "Sector " + _simObject.name, 5 );        
+        Sim.createArea( pos, "Area " + _simObject.name, 5 );        
     }
 };

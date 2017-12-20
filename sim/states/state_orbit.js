@@ -14,10 +14,27 @@ var StateOrbit = {
  
     },
     
-    execute: function( _simObject ) {        
-        //map fp at low res (1 deg squares)                    
+    execute: function( _simObject ) {            
         
-         //map floor at low res (1 deg squares)
+        //orbital mapping
+        for (var i=0; i<_simObject.components.length; i++) {
+            if ( Sensor.isPrototypeOf( _simObject.components[i] )) {
+                var ssr = _simObject.components[i];
+                if (ssr.operational && ssr.active) {
+                    switch (ssr.type) {
+                        case ssr.types.HYPERSPECTRAL:
+                            //map fp at low res (1 deg squares)    
+                            ssr.performSpectralMapping();
+                        break;
+            
+                        case ssr.types.RADAR:
+                            //map floor at low res (1 deg squares)
+                            ssr.performOrbitalRadarMapping();
+                        break;
+                    }
+                }
+            }
+        }        
     },
     
     exit: function( _simObject ) {

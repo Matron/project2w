@@ -63,10 +63,10 @@ Gui = {
         })
     },
 
-    sectorSelected: function( _sector ) {
+    areaSelected: function( _area ) {
         this.mfds.forEach( mfd => {
             if (PageTactical.isPrototypeOf( mfd.page )) {
-                mfd.page.init( _sector );
+                mfd.page.init( _area );
             }
         })
     },

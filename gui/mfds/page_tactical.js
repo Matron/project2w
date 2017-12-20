@@ -3,12 +3,12 @@ var PageTactical = {
     mfd: null,
     seaFloor: new Image(),
     ready: false,
-    sector: null,    
+    area: null,    
 
-    init: function( _sector ) {
-        this.sector = _sector;
+    init: function( _area ) {
+        this.area = _area;
         this.seaFloor.onload = () => { this.ready = true; };        
-        this.seaFloor.src = "sim/sectors/seafloor_small.jpg"; 
+        this.seaFloor.src = "sim/areas/seafloor_small.jpg"; 
     },
 
     draw: function( _context ) {   
@@ -17,9 +17,9 @@ var PageTactical = {
         _context.fillText( "Page: " + this.name, 200, 20 );
         _context.fillText( "Time: " + Date.now(), 20, 20 );
 
-        if (this.sector) {
+        if (this.area) {
             if (this.ready) _context.drawImage( this.seaFloor , 0, 30, this.mfd.$canvas.width, this.mfd.$canvas.height);
-            _context.fillText( "Sector: " + this.sector.name, 420, 20 );
+            _context.fillText( "Area: " + this.area.name, 420, 20 );
             this.drawObjects( _context );
         }
     },
@@ -58,7 +58,7 @@ var PageTactical = {
 
 
     onClick: function( _event ) {
-        if (this.sector) {
+        if (this.area) {
             console.log("Clicked at " + _event.offsetX + " " + _event.offsetY );
             var pos = this.screenToWorld(_event.offsetX, _event.offsetY)
             console.log("Lon: " + pos.lon.toFixed(4) + " Lat: " + pos.lat.toFixed(4));
@@ -74,20 +74,20 @@ var PageTactical = {
     }, 
 
     worldToScreen: function( _lon, _lat ) {
-        var screenX = (this.sector.corner_tl.lon - _lon) * this.mfd.$canvas.width / this.sector.side;
-        var screenY = (this.sector.corner_tl.lat - _lat) * this.mfd.$canvas.height / this.sector.side;        
+        var screenX = (this.area.corner_tl.lon - _lon) * this.mfd.$canvas.width / this.area.side;
+        var screenY = (this.area.corner_tl.lat - _lat) * this.mfd.$canvas.height / this.area.side;        
         return { x: Math.abs(screenX), y: screenY };
     }, 
 
     screenToWorld: function( _x, _y ) {
-        var lon = this.sector.corner_tl.lon + (_x * this.sector.side / this.mfd.$canvas.width);
-        var lat = this.sector.corner_tl.lat - (_y * this.sector.side / this.mfd.$canvas.height);
+        var lon = this.area.corner_tl.lon + (_x * this.area.side / this.mfd.$canvas.width);
+        var lat = this.area.corner_tl.lat - (_y * this.area.side / this.mfd.$canvas.height);
         return { lon: lon, lat: lat };
     },
 
     metersToPixels: function( _distMts ) {
         var degrees =  _distMts / 110955;
-        var pixels = degrees * this.mfd.$canvas.height / this.sector.side;
+        var pixels = degrees * this.mfd.$canvas.height / this.area.side;
         return pixels;
     }
 }

@@ -1,10 +1,10 @@
 // implement singleton?
 var Sim = {
     simObjects: new Array(),
-    //refactor -- esta bien esto??
+    //refactor -- esta bien esto?? usado en tactical page para dibujar simobjects detectados
     detectedObjects: new Array(),
-    sectors: new Array(),
-    
+    tacticAreas: new Array(),    
+
     //do we need to pass _elapsed?
     update: function( _elapsed ) {   
         this.detectedObjects = [];
@@ -12,11 +12,27 @@ var Sim = {
     },
     
     load: function( _scenarioName ) {
-        //refactor
-        //add switch for loading different scenarios
-        
+        //refactor -- load specific scenario from parameter
+
+        //this.createWorld();
+
+        this.createObjects();
+
+        //this.createTacticAreas();
+    },
+
+/*     createWorld: function() {
+        for ( var lon = 0; lon < 360; lon++ ) {
+            this.world[lon] = new Array();
+            for ( var lat = 0; lat < 180; lat++ ) {                
+                this.world[lon][lat] = { bioValue: Math.random(), bioColor: null}                                         
+            }                                               
+        }
+    }, */
+
+    createObjects: function() {
         var orbiter = Object.create( Orbiter );
-        var pos = new GeoLocation( 0, 0 );        
+        var pos = new GeoLocation( 80, -180 );        
         orbiter.build( "Orbiter", pos, "player");      
         orbiter.stateMachine.changeState( StateOrbit );
         this.simObjects.push( orbiter );
@@ -27,7 +43,7 @@ var Sim = {
         drone.stateMachine.changeState( StateScanForResources);    
         this.simObjects.push( drone );            
         var ps = new GeoLocation( -33.3669, -38.6666 );
-        this.createSector( ps, "Sector 1", 5 );
+        this.createTacticArea( ps, "Area 1", 5 );
 
         var drone1 = Object.create( Drone);  
         var pos = new GeoLocation();
@@ -54,9 +70,9 @@ var Sim = {
         };
     },
 
-    createSector: function( _corner, _name, _side ) {
-        var sector = Object.create( Sector );
-        sector.init( _corner, _name, _side );
-        this.sectors.push( sector );
+    createTacticArea: function( _corner, _name, _side ) {
+        var tacticArea = Object.create( TacticArea );
+        tacticArea.init( _corner, _name, _side );
+        this.tacticAreas.push( tacticArea );
     }
 };
