@@ -1,11 +1,15 @@
 // implement singleton?
 var Sim = {
     simObjects: new Array(),
+
     //refactor -- esta bien esto?? usado en tactical page para dibujar simobjects detectados
     detectedObjects: new Array(),
+    
+    //refactor -- no va al world?
     tacticAreas: new Array(),    
 
-    //do we need to pass _elapsed?
+    world: null,
+
     update: function( _elapsed ) {   
         this.detectedObjects = [];
         this.simObjects.forEach( so => so.update( _elapsed ));
@@ -14,21 +18,17 @@ var Sim = {
     load: function( _scenarioName ) {
         //refactor -- load specific scenario from parameter
 
-        //this.createWorld();
+        this.createWorld();
 
         this.createObjects();
 
         //this.createTacticAreas();
     },
 
-/*     createWorld: function() {
-        for ( var lon = 0; lon < 360; lon++ ) {
-            this.world[lon] = new Array();
-            for ( var lat = 0; lat < 180; lat++ ) {                
-                this.world[lon][lat] = { bioValue: Math.random(), bioColor: null}                                         
-            }                                               
-        }
-    }, */
+    createWorld: function() {
+        this.world = Object.create( World );
+        this.world.init();
+    },
 
     createObjects: function() {
         var orbiter = Object.create( Orbiter );
