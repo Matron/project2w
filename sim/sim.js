@@ -45,8 +45,8 @@ var Sim = {
 
         for ( var i = 0; i < 5; i++) {
             var crt = Object.create( Critter );
-            var pos = new GeoLocation( Math.random() * (-40 +30) -30,
-                                       Math.random() * (-40 +30) -30,
+            var pos = new GeoLocation( Math.random() * (-37.5 +32.5) -32.5,
+                                       Math.random() * (-37.5 +32.5) -32.5,
                                        Math.floor(Math.random() * (-500 +100) -100));
             crt.build( "crt" + (i+1), pos, "neutral" );
             crt.stateMachine.changeState( CritterFeed );

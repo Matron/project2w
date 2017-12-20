@@ -15,7 +15,9 @@ var StateOrbit = {
     },
     
     execute: function( _simObject ) {        
-
+        //map fp at low res (1 deg squares)                    
+        
+         //map floor at low res (1 deg squares)
     },
     
     exit: function( _simObject ) {

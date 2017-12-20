@@ -24,44 +24,25 @@ var Sensor = {
         this.operational = true;
         this.active = false;     
     },
-    
-    update: function() {
-        //refactor - check inside sector?
-        this.parentObject.contacts = new Array();
 
-        switch (this.type) {
-            case this.types.HYPERSPECTRAL:
-            break;
-
-            case this.types.RADAR:
-            break;
-
-            case this.types.SONAR:
-                Sim.simObjects.forEach( so => {
-                    if (this.parentObject !== so ) {
-                        if ( this.operational ) {                        
-                            this.checkDetection( so );                            
+    checkSonarDetection: function() {
+        Sim.simObjects.forEach( _simObject => {
+            if ( this.parentObject !== _simObject ) {
+                var dist = this.parentObject.dynamics.position.calculateDistance( _simObject.dynamics.position );
+                var altDiff = Math.abs( this.parentObject.dynamics.position.alt - _simObject.dynamics.position.alt );
+                if ( dist < this.range && altDiff < 1000 ) {   
+                    if ( this.active ) {
+                        Sim.detectedObjects.push( _simObject );
+                        this.parentObject.contacts.push( { so: _simObject, dist: dist } );            
+                    } else {
+                        if ( _simObject.noise > 0 ) {
+                            Sim.detectedObjects.push( _simObject );
+                            this.parentObject.contacts.push( { so: _simObject, dist: dist } );            
                         }
-                    }
-                });
-            break;
-        }
-    },
-
-    checkDetection: function( _simObject ) {
-        var dist = this.parentObject.dynamics.position.calculateDistance( _simObject.dynamics.position );
-        var altDiff = Math.abs( this.parentObject.dynamics.position.alt - _simObject.dynamics.position.alt );
-        if ( dist < this.range ) { //&& altDiff < 1000 ) {   
-            if ( this.active ) {
-                Sim.detectedObjects.push( _simObject );
-                this.parentObject.contacts.push( { so: _simObject, dist: dist } );            
-            } else {
-                if ( _simObject.noise > 0 ) {
-                    Sim.detectedObjects.push( _simObject );
-                    this.parentObject.contacts.push( { so: _simObject, dist: dist } );            
+                    }            
                 }
-            }            
-        }
+            }
+        })        
     },
 
     toggleSensor: function() {    
@@ -77,5 +58,9 @@ var Sensor = {
         if (this.type !== this.types.SONAR) {
             this.active = !this.active;
         }
+    },
+
+    showInfo: function() {
+        console.log("Ssr " + this.type + " on " + this.parentObject.name);
     }
 };

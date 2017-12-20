@@ -5,6 +5,29 @@ var StateGlobal = {
     },
     
     execute: function( _simObject ) {
+        
+        //update sensors
+        _simObject.contacts = new Array();       
+        for (var i=0; i<_simObject.components.length; i++) {
+            if ( Sensor.isPrototypeOf( _simObject.components[i] )) {
+                var ssr = _simObject.components[i];
+                if (ssr.operational) {
+                    switch (ssr.type) {
+                        case ssr.types.HYPERSPECTRAL:
+            
+                        break;
+            
+                        case ssr.types.RADAR:
+                        
+                        break;
+            
+                        case ssr.types.SONAR:
+                            ssr.checkSonarDetection();
+                        break;
+                    }
+                }
+            }
+        }
     },
         
     exit: function( _simObject ) {

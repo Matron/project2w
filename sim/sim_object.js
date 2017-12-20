@@ -12,11 +12,7 @@ var SimObject = {
     }, 
     
     update: function( _elapsed ) {
-        //update sensors
-        if (this.hasComponent( Sensor )) {
-            this.hasComponent( Sensor ).update();
-        }
-
+        
         //update state
         if (this.stateMachine) this.stateMachine.update();
         
