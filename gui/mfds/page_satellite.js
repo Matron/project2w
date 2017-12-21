@@ -2,41 +2,28 @@ var PageSatellite = {
     name: "Satellite view",
     displayedObjects: new Array(),
     mfd: null,
-    radius: 7,
     background: new Image(),
     imageReady: false,
-    layerBio: null,
+    showSpectral: true,
+    showRadar: false,
+    sectorHeight: 0,
+    sectorWidth: 0,
     context: null,
 
     init: function() {
         this.background.onload = () => { this.imageReady = true; };        
         this.background.src = "gui/mfds/satmap.jpg"; 
-        
-        //layer bio
-        this.imageData = this.context.createImageData( this.mfd.$canvas.width, this.mfd.$canvas.height );
-        var pixels = this.imageData.data;
- 
-        // Number of sector tiles        
-        var numSectorCols = 360;
-        var numSectorRows = 180;
-        // Dimensions of each tile
-        var sectorWidth = this.imageData.width / numSectorCols;
-        var sectorHeight = this.imageData.height / numSectorRows;
-        
-        for (var r = 0; r < numSectorRows; r++) {
-            for (var c = 0; c < numSectorCols; c++) {
-                // Set the pixel values for each tile
-                var red = Math.floor(Math.random()*255);
-                var green = Math.floor(Math.random()*255);
-                var blue = Math.floor(Math.random()*255);
-            };
-        };
+
+        this.sectorWidth = this.mfd.$canvas.width / Sim.world.sectors.length;
+        this.sectorHeight = this.mfd.$canvas.height / Sim.world.sectors[0].length;
     },
 
     draw: function( ) {
         this.context.clearRect( 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );
         
-        if (this.imageReady) this.context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
+        //if (this.imageReady) this.context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
+
+        if (this.showSpectral) this.drawSpectral();  
 
         this.context.fillStyle = "#13cfdb";
         this.context.fillText( "Time: " + Date.now(), 20, 20 );
@@ -46,9 +33,7 @@ var PageSatellite = {
 
         this.drawAreas();
 
-        this.drawObjects();        
-
-        this.context.putImageData( this.imageData, 0, 0 );
+        this.drawObjects();                       
     },
     
     drawLines: function() {
@@ -106,7 +91,7 @@ var PageSatellite = {
                 this.context.strokeStyle = "#aaaaaa";                
                 this.context.lineWidth = 2;
                 this.context.beginPath();
-                this.context.arc( screen.x, screen.y, this.radius, 0, (Math.PI * 2), true);
+                this.context.arc( screen.x, screen.y, 7, 0, (Math.PI * 2), true);
                 this.context.stroke();
                 this.context.closePath();  
                 so.hasComponent( Graphics ).screenX = screen.x;
@@ -115,6 +100,21 @@ var PageSatellite = {
         });
     },
     
+    drawSpectral: function() {
+        this.context.save();
+        for (var r=0; r<Sim.world.sectors.length; r++) {
+            for (var c=0; c<Sim.world.sectors[r].length; c++) {
+                var color = Sim.world.sectors[r][c].bioLastValueMapped;            
+                if (color > 200) {
+                    this.context.fillStyle = "rgba(0, " + color + ", 0, 0.5)";
+                    this.context.fillRect( r *  this.sectorWidth , c * this.sectorHeight,
+                                           this.sectorWidth, this.sectorHeight );
+                }
+            }
+        }  
+        this.context.restore();
+    },
+
     getSpecValue: function() {
 
         var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),

@@ -28,21 +28,16 @@ var Sensor = {
 
     performSpectralMapping: function() {
         //map fp at low res (1 deg squares)
-        //check current position in world array
+        //refactor - move lon lat calc to state
+        //- add sensor range
+        //- add sensor sensitivity --(color value threshold to display on satellite view)
         var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
             lat = ( Math.floor( this.parentObject.dynamics.position.lat - 90 ) * -1 );
-
-        //paint the empty transparent image layer with color value based on bioValue
-        var pixels = this.imageData.data;
-        var numPixels = this.imageData.width * this.imageData.height;
-        for (var i = 0; i < numPixels; i++) {
-            pixels[i*4] = 0; //Math.floor(Math.random()*255); // Red
-            pixels[i*4+1] = 0; //Math.floor(Math.random()*255); // Green
-            pixels[i*4+2] = Math.floor(Math.random()*255); // Blue
-            pixels[i*4+3] = 255; // Alpha
-        };        
-        /* Sim.world[lon][lat].bioColor = color;
-        console.log("Color " + Sim.world[lon][lat].bioColor); */
+        for (var j=lon-10; j<lon+11; j++) {
+            for (var i=lat-10; i<lat+11; i++) {
+                Sim.world.sectors[j][i].bioLastValueMapped = Math.floor( (Sim.world.sectors[j][i].bioValue * 255) / 100 );
+            }    
+        }
     },
 
     performOrbitalRadarMapping: function() {
