@@ -33,6 +33,6 @@ var StateDroneDeploy = {
     createArea: function( _simObject ) {
         var pos = new GeoLocation( _simObject.dynamics.position.lat + 2.5,
                                    _simObject.dynamics.position.lon - 2.5 );
-        Sim.createArea( pos, "Area " + _simObject.name, 5 );        
+        Sim.createTacticArea( pos, "Area " + _simObject.name, 5 );        
     }
 };
