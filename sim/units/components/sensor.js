@@ -29,15 +29,19 @@ var Sensor = {
     performSpectralMapping: function() {
         //map fp at low res (1 deg squares)
         //check current position in world array
-/*         var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
+        var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
             lat = ( Math.floor( this.parentObject.dynamics.position.lat - 90 ) * -1 );
 
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor( Sim.world[lon][lat].bioValue * 16)];
-        }
-        Sim.world[lon][lat].bioColor = color;
+        //paint the empty transparent image layer with color value based on bioValue
+        var pixels = this.imageData.data;
+        var numPixels = this.imageData.width * this.imageData.height;
+        for (var i = 0; i < numPixels; i++) {
+            pixels[i*4] = 0; //Math.floor(Math.random()*255); // Red
+            pixels[i*4+1] = 0; //Math.floor(Math.random()*255); // Green
+            pixels[i*4+2] = Math.floor(Math.random()*255); // Blue
+            pixels[i*4+3] = 255; // Alpha
+        };        
+        /* Sim.world[lon][lat].bioColor = color;
         console.log("Color " + Sim.world[lon][lat].bioColor); */
     },
 

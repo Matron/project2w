@@ -4,22 +4,39 @@ var PageSatellite = {
     mfd: null,
     radius: 7,
     background: new Image(),
+    imageReady: false,
     layerBio: null,
     context: null,
 
     init: function() {
-        this.background.onload = () => { this.ready = true; };        
+        this.background.onload = () => { this.imageReady = true; };        
         this.background.src = "gui/mfds/satmap.jpg"; 
-
+        
         //layer bio
-        var imageData = this.context.createImageData(200, 200);
-
+        this.imageData = this.context.createImageData( this.mfd.$canvas.width, this.mfd.$canvas.height );
+        var pixels = this.imageData.data;
+ 
+        // Number of sector tiles        
+        var numSectorCols = 360;
+        var numSectorRows = 180;
+        // Dimensions of each tile
+        var sectorWidth = this.imageData.width / numSectorCols;
+        var sectorHeight = this.imageData.height / numSectorRows;
+        
+        for (var r = 0; r < numSectorRows; r++) {
+            for (var c = 0; c < numSectorCols; c++) {
+                // Set the pixel values for each tile
+                var red = Math.floor(Math.random()*255);
+                var green = Math.floor(Math.random()*255);
+                var blue = Math.floor(Math.random()*255);
+            };
+        };
     },
 
     draw: function( ) {
         this.context.clearRect( 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );
         
-        if (this.ready) this.context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
+        if (this.imageReady) this.context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
 
         this.context.fillStyle = "#13cfdb";
         this.context.fillText( "Time: " + Date.now(), 20, 20 );
@@ -30,6 +47,8 @@ var PageSatellite = {
         this.drawAreas();
 
         this.drawObjects();        
+
+        this.context.putImageData( this.imageData, 0, 0 );
     },
     
     drawLines: function() {

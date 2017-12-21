@@ -40,8 +40,8 @@ Gui = {
         
         //create page and assign to the mfds
         var pageSat = Object.create( PageSatellite );
-        pageSat.init();
         mfd_l.setPage( pageSat );
+        pageSat.init();        
 
         var pageTact = Object.create( PageTactical );
         pageTact.init();
