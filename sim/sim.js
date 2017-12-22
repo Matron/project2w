@@ -32,7 +32,7 @@ var Sim = {
 
     createObjects: function() {
         var orbiter = Object.create( Orbiter );
-        var pos = new GeoLocation( 0, 0 );        
+        var pos = new GeoLocation( -79, 0 );        
         orbiter.build( "Orbiter", pos, "player");      
         orbiter.stateMachine.changeState( StateOrbit );
         this.simObjects.push( orbiter );

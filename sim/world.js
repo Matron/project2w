@@ -8,7 +8,8 @@ var World = {
             for ( var lat = 0; lat < 180; lat++ ) {                
                 this.sectors[lon][lat] = { bioValue: Math.floor( Math.random() * 100 ),
                                            bioLastValueMapped: -1,
-                                           depth: Math.floor( Math.random() * 15000 ) + 1000 * -1
+                                           depthValue: Math.floor( Math.random() * 15000 ) + 100,
+                                           depthLastValueMapped: -1
                                           };
             }                                           
         }

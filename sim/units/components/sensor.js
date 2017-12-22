@@ -26,23 +26,26 @@ var Sensor = {
         this.performingSpectralMapping = false; 
     },
 
-    performSpectralMapping: function() {
+    performSpectralMapping: function( _lon, _lat) {
         //map fp at low res (1 deg squares)
-        //refactor - move lon lat calc to state
-        //- add sensor range
+        //refactor - add sensor range
         //- add sensor sensitivity --(color value threshold to display on satellite view)
-        var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
-            lat = ( Math.floor( this.parentObject.dynamics.position.lat - 90 ) * -1 );
-        for (var j=lon-10; j<lon+11; j++) {
-            for (var i=lat-10; i<lat+11; i++) {
+        for (var j = _lon - 10; j < _lon + 11; j++) {
+            for (var i = _lat - 10; i < _lat + 11; i++) {
+                //refactor - this is a color value, should be set by gui
                 Sim.world.sectors[j][i].bioLastValueMapped = Math.floor( (Sim.world.sectors[j][i].bioValue * 255) / 100 );
             }    
         }
     },
 
-    performOrbitalRadarMapping: function() {
+    performOrbitalRadarMapping: function( _lon, _lat) {
         //map floor at low res (1 deg squares)
-        console.log( this.type + " on " + this.parentObject.name + " is performing orbital radar mapping");
+        for (var j = _lon - 10; j < _lon + 11; j++) {
+            for (var i = _lat - 10; i < _lat + 11; i++) {
+                var radarValue = Math.floor( (Sim.world.sectors[j][i].depthValue * 255) / 15000); //refactor -- for color code, max depth is 15000 on world.js               
+                Sim.world.sectors[j][i].depthLastValueMapped = radarValue;
+            }    
+        }
     },
 
     checkSonarDetection: function() {

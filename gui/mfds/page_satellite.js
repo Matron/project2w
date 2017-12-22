@@ -5,7 +5,7 @@ var PageSatellite = {
     background: new Image(),
     imageReady: false,
     showSpectral: true,
-    showRadar: false,
+    showRadar: true,
     sectorHeight: 0,
     sectorWidth: 0,
     context: null,
@@ -24,6 +24,8 @@ var PageSatellite = {
         //if (this.imageReady) this.context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
 
         if (this.showSpectral) this.drawSpectral();  
+        
+        if (this.showRadar) this.drawRadar();
 
         this.context.fillStyle = "#13cfdb";
         this.context.fillText( "Time: " + Date.now(), 20, 20 );
@@ -102,10 +104,10 @@ var PageSatellite = {
     
     drawSpectral: function() {
         this.context.save();
-        for (var r=0; r<Sim.world.sectors.length; r++) {
-            for (var c=0; c<Sim.world.sectors[r].length; c++) {
+        for (var r = 0; r < Sim.world.sectors.length; r++) {
+            for (var c = 0; c < Sim.world.sectors[r].length; c++) {
                 var color = Sim.world.sectors[r][c].bioLastValueMapped;            
-                if (color > 200) {
+                if (color > 240) {
                     this.context.fillStyle = "rgba(0, " + color + ", 0, 0.5)";
                     this.context.fillRect( r *  this.sectorWidth , c * this.sectorHeight,
                                            this.sectorWidth, this.sectorHeight );
@@ -115,14 +117,21 @@ var PageSatellite = {
         this.context.restore();
     },
 
-    getSpecValue: function() {
+    drawRadar: function() {
+        this.context.save();
+        for (var r = 0; r < Sim.world.sectors.length; r++) {
+            for (var c = 0; c < Sim.world.sectors[r].length; c++) {
+                if (Sim.world.sectors[r][c].depthLastValueMapped > 0) {
+                    //this.context.fillStyle = utils.pickHex( [0, 0, 0], [255, 255, 255], [0, 0, Sim.world.sectors[r][c].depthLastValueMapped] );
+                    this.context.fillStyle = "rgba(0, 0, " + Sim.world.sectors[r][c].depthLastValueMapped + ", 0.5)";
+                    this.context.fillRect( r *  this.sectorWidth , c * this.sectorHeight, this.sectorWidth, this.sectorHeight );                
+                }
+            }
+        }
+        this.context.restore();
 
-        var lon = Math.floor( this.parentObject.dynamics.position.lon + 180 ),
-            lat = ( Math.floor( this.parentObject.dynamics.position.lat - 90 ) * -  1 );
-        
-        console.log("Pos: " + lon + " " + lat + " " + Sim.world[lon][lat].color );        
     },
-
+    
     worldToScreen: function( _lon, _lat ) {
         var screenX = ( _lon * (this.mfd.$canvas.width / 2) / 180) + this.mfd.$canvas.width / 2;
         var screenY = ( _lat * -1 * (this.mfd.$canvas.height / 2) / 90) + this.mfd.$canvas.height / 2;        

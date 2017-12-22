@@ -16,6 +16,9 @@ var StateOrbit = {
     
     execute: function( _simObject ) {            
         
+        var lon = Math.floor( _simObject.dynamics.position.lon + 180 ),
+            lat = ( Math.floor( _simObject.dynamics.position.lat - 90 ) * -1 );
+        
         //orbital mapping
         for (var i=0; i<_simObject.components.length; i++) {
             if ( Sensor.isPrototypeOf( _simObject.components[i] )) {
@@ -24,12 +27,12 @@ var StateOrbit = {
                     switch (ssr.type) {
                         case ssr.types.HYPERSPECTRAL:
                             //map fp at low res (1 deg squares)    
-                            ssr.performSpectralMapping();
+                            ssr.performSpectralMapping( lon, lat);
                         break;
             
                         case ssr.types.RADAR:
                             //map floor at low res (1 deg squares)
-                            ssr.performOrbitalRadarMapping();
+                            ssr.performOrbitalRadarMapping( lon, lat);
                         break;
                     }
                 }
