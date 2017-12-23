@@ -6,6 +6,7 @@ var TacticArea = {
     corner_tl: new GeoLocation(), //size is 5 * 5 degrees
     name: "",
     side: 5, //size of the area side in degrees
+    //mapData: {x: 0, y: 0, width: 0, height: 0 },
 
     init: function( _pos, _name, _side ) {
         //create objects and environment (variable)

@@ -40,12 +40,12 @@ var Sensor = {
 
     performOrbitalRadarMapping: function( _lon, _lat) {
         //map floor at low res (1 deg squares)
-        for (var j = _lon - 10; j < _lon + 11; j++) {
+/*         for (var j = _lon - 10; j < _lon + 11; j++) {
             for (var i = _lat - 10; i < _lat + 11; i++) {
                 var radarValue = Math.floor( (Sim.world.sectors[j][i].depthValue * 255) / 15000); //refactor -- for color code, max depth is 15000 on world.js               
                 Sim.world.sectors[j][i].depthLastValueMapped = radarValue;
             }    
-        }
+        } */
     },
 
     checkSonarDetection: function() {

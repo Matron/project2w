@@ -1,15 +1,14 @@
-var PageTactical = {
-    name: "Tactical view",
+var PageArea = {
+    name: "Area view",
     mfd: null,
     context: null,
-    seaFloor: new Image(),
+    map: null,
     ready: false,
     area: null,    
 
     init: function( _area ) {
         this.area = _area;
-        this.seaFloor.onload = () => { this.ready = true; };        
-        this.seaFloor.src = "sim/areas/seafloor_small.jpg"; 
+        this.map =  Gui.getSatPage().background;
     },
 
     draw: function() {   
@@ -19,7 +18,13 @@ var PageTactical = {
         this.context.fillText( "Time: " + Date.now(), 20, 20 );
 
         if (this.area) {
-            if (this.ready) this.context.drawImage( this.seaFloor , 0, 30, this.mfd.$canvas.width, this.mfd.$canvas.height);
+            this.context.drawImage( this.map, 
+                                    this.area.mapData.x  * this.map.width / Gui.getSatPage().mfd.$canvas.width,
+                                    this.area.mapData.y * this.map.height / Gui.getSatPage().mfd.$canvas.height, 
+                                    this.area.mapData.width  * this.map.width / Gui.getSatPage().mfd.$canvas.width,
+                                     this.area.mapData.height * this.map.height / Gui.getSatPage().mfd.$canvas.height,
+                                    0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );
+            
             this.context.fillText( "Area: " + this.area.name, 420, 20 );
             this.drawObjects();
         }

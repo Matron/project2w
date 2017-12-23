@@ -21,7 +21,7 @@ var PageSatellite = {
     draw: function( ) {
         this.context.clearRect( 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height );
         
-        //if (this.imageReady) this.context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
+        if (this.imageReady) this.context.drawImage( this.background , 0, 0, this.mfd.$canvas.width, this.mfd.$canvas.height);
 
         if (this.showSpectral) this.drawSpectral();  
         
@@ -70,7 +70,12 @@ var PageSatellite = {
             var br_lat = ((se.corner_tl.lat - se.side) * -1 * (this.mfd.$canvas.height / 2) / 90) + this.mfd.$canvas.height / 2;
             var w = Math.abs( tl_lon - br_lon );
             var l = Math.abs( tl_lat - br_lat );                       
-            this.displayedAreas.push( { area: se, rect: { x: tl_lon, y: tl_lat, width: w, height: l} } );
+            se.mapData = { x: tl_lon, 
+                           y: tl_lat,
+                           width: w, 
+                           height: l }; 
+            //debugger;
+            this.displayedAreas.push( se );
             
             this.context.beginPath();
             this.context.rect( tl_lon, tl_lat, w , l );
@@ -150,18 +155,19 @@ var PageSatellite = {
     },
 
     onClick: function( _event ) {
-
+        
         for (var i=0; i<this.displayedObjects.length; i++) {
             if ( utils.checkObjectClicked( this.displayedObjects[i], _event.offsetX, _event.offsetY )) {
                 console.log( this.displayedObjects[i].name + " clicked" );
                 Gui.objectSelected( this.displayedObjects[i] );
+                console.log("click " + _event.offsetX + " " + _event.offsetY  )
                 return;
             }
         }
         for (var j=0; j<this.displayedAreas.length; j++) {
-            if ( utils.containsPoint( this.displayedAreas[j].rect, _event.offsetX, _event.offsetY )) {
-                console.log( this.displayedAreas[j].area.name + " clicked" );
-                Gui.areaSelected( this.displayedAreas[j].area );
+            if ( utils.containsPoint( this.displayedAreas[j].mapData, _event.offsetX, _event.offsetY )) {
+                console.log( this.displayedAreas[j].name + " clicked" );                                         
+                Gui.areaSelected( this.displayedAreas[j] );
                 return;
             }
         }

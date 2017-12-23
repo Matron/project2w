@@ -4,7 +4,7 @@ Gui = {
         //create html canvas elements for each mfd
         var $canvas_left = document.createElement( 'canvas' );
         $canvas_left.setAttribute( 'id', 'canvas_left' );
-        $canvas_left.setAttribute( 'width', '520' );
+        $canvas_left.setAttribute( 'width', '720' );
         $canvas_left.setAttribute( 'height', '360' );
 
         var $canvas_center = document.createElement( 'canvas' );
@@ -17,11 +17,10 @@ Gui = {
         $canvas_right.setAttribute( 'width', '520' );
         $canvas_right.setAttribute( 'height', '360' );        
 
-        var $body = document.body;
-        $body.insertBefore( $canvas_right, $body.firstChild );
+        var $body = document.body;        
         $body.insertBefore( $canvas_center, $body.firstChild );
         $body.insertBefore( $canvas_left, $body.firstChild );        
-        
+        $body.insertBefore( $canvas_right, $body.firstChild );        
 
         //craete mfd and assign its canvas
         this.mfds = new Array();
@@ -43,9 +42,9 @@ Gui = {
         mfd_l.setPage( pageSat );
         pageSat.init();        
 
-        var pageTact = Object.create( PageTactical );
-        pageTact.init();
-        mfd_r.setPage( pageTact );
+        var pageArea = Object.create( PageArea );
+        pageArea.init();
+        mfd_r.setPage( pageArea );
 
         var pageUnit = Object.create( PageUnit );
         mfd_c.setPage( pageUnit );        
@@ -65,7 +64,7 @@ Gui = {
 
     areaSelected: function( _area ) {
         this.mfds.forEach( mfd => {
-            if (PageTactical.isPrototypeOf( mfd.page )) {
+            if (PageArea.isPrototypeOf( mfd.page )) {
                 mfd.page.init( _area );
             }
         })
